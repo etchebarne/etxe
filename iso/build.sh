@@ -7,17 +7,14 @@ ISO_PATH="$REPO_PATH/iso"
 ARCHISO_PROFILE="${ARCHISO_PROFILE:-/usr/share/archiso/configs/releng}"
 WORK_PATH="${WORK_PATH:-/tmp/etxe-iso-work}"
 OUT_PATH="${OUT_PATH:-$ISO_PATH/out}"
-CACHE_PATH="${CACHE_PATH:-$ISO_PATH/cache}"
 PROFILE_PATH="$WORK_PATH/profile"
 TARGET_REPO_PATH="$PROFILE_PATH/airootfs/opt/etxe"
 OFFLINE_REPO_PATH="$TARGET_REPO_PATH/repo/os/x86_64"
-CACHE_REPO_PATH="$CACHE_PATH/repo/os/x86_64"
-CACHE_DB_PATH="$CACHE_PATH/pacman-db"
-FONT_CACHE_PATH="$CACHE_PATH/fonts/RedHatDisplay"
+PACKAGE_REPO_PATH="$WORK_PATH/offline-repo/os/x86_64"
+PACMAN_DB_PATH="$WORK_PATH/pacman-db"
 FONT_PATH="$PROFILE_PATH/airootfs/usr/share/fonts/TTF"
 RED_HAT_DISPLAY_URL="https://raw.githubusercontent.com/RedHatOfficial/RedHatFont/master/fonts/Proportional/RedHatDisplay/ttf"
 SKIP_OFFLINE_REPO="${SKIP_OFFLINE_REPO:-NO}"
-REFRESH_FONT_CACHE="${REFRESH_FONT_CACHE:-NO}"
 
 die() {
   printf 'error: %s\n' "$*" >&2
@@ -29,26 +26,21 @@ log() {
 }
 
 download_red_hat_display() {
-  local font_weight source_font target_font
+  local font_weight target_font
 
-  mkdir -p "$FONT_CACHE_PATH" "$FONT_PATH"
+  command -v curl >/dev/null || die "curl is required to download Red Hat Display"
+  mkdir -p "$FONT_PATH"
 
   for font_weight in Regular Medium SemiBold Bold; do
-    source_font="$FONT_CACHE_PATH/RedHatDisplay-$font_weight.ttf"
     target_font="$FONT_PATH/RedHatDisplay-$font_weight.ttf"
 
-    if [[ ! -f "$source_font" || "$REFRESH_FONT_CACHE" == "YES" ]]; then
-      command -v curl >/dev/null || die "curl is required to download Red Hat Display"
-      log "Downloading Red Hat Display $font_weight"
-      curl \
-        --fail \
-        --location \
-        --retry 3 \
-        --output "$source_font" \
-        "$RED_HAT_DISPLAY_URL/RedHatDisplay-$font_weight.ttf"
-    fi
-
-    cp -a "$source_font" "$target_font"
+    log "Downloading Red Hat Display $font_weight"
+    curl \
+      --fail \
+      --location \
+      --retry 3 \
+      --output "$target_font" \
+      "$RED_HAT_DISPLAY_URL/RedHatDisplay-$font_weight.ttf"
   done
 }
 
@@ -150,33 +142,33 @@ sync_offline_repo() {
   mapfile -t install_packages < <(grep -Ev '^[[:space:]]*(#|$)' "$REPO_PATH/packages/native.pkglist")
   [[ "${#install_packages[@]}" -gt 0 ]] || die "no native packages configured"
 
-  mkdir -p "$CACHE_REPO_PATH" "$CACHE_DB_PATH"
+  mkdir -p "$PACKAGE_REPO_PATH" "$PACMAN_DB_PATH"
 
-  log "Syncing offline package cache"
+  log "Downloading offline package repository"
   pacman_config="$WORK_PATH/pacman.conf"
   cp /etc/pacman.conf "$pacman_config"
   sed -i 's/^DownloadUser/#&/' "$pacman_config"
-  rm -f "$CACHE_DB_PATH"/sync/*.part
+  rm -f "$PACMAN_DB_PATH"/sync/*.part
 
   pacman \
     -Syw \
     --noconfirm \
     --config "$pacman_config" \
     --disable-sandbox \
-    --dbpath "$CACHE_DB_PATH" \
-    --cachedir "$CACHE_REPO_PATH" \
+    --dbpath "$PACMAN_DB_PATH" \
+    --cachedir "$PACKAGE_REPO_PATH" \
     "${install_packages[@]}"
 
   shopt -s nullglob
-  package_files=("$CACHE_REPO_PATH"/*.pkg.tar.zst "$CACHE_REPO_PATH"/*.pkg.tar.xz)
-  [[ "${#package_files[@]}" -gt 0 ]] || die "offline package cache has no packages"
-  rm -f "$CACHE_REPO_PATH"/etxe.db "$CACHE_REPO_PATH"/etxe.db.tar.* "$CACHE_REPO_PATH"/etxe.files "$CACHE_REPO_PATH"/etxe.files.tar.*
-  repo-add "$CACHE_REPO_PATH/etxe.db.tar.zst" "${package_files[@]}"
+  package_files=("$PACKAGE_REPO_PATH"/*.pkg.tar.zst "$PACKAGE_REPO_PATH"/*.pkg.tar.xz)
+  [[ "${#package_files[@]}" -gt 0 ]] || die "offline package repository has no packages"
+  rm -f "$PACKAGE_REPO_PATH"/etxe.db "$PACKAGE_REPO_PATH"/etxe.db.tar.* "$PACKAGE_REPO_PATH"/etxe.files "$PACKAGE_REPO_PATH"/etxe.files.tar.*
+  repo-add "$PACKAGE_REPO_PATH/etxe.db.tar.zst" "${package_files[@]}"
   shopt -u nullglob
 
-  log "Bundling cached offline package repository"
+  log "Bundling offline package repository"
   mkdir -p "$OFFLINE_REPO_PATH"
-  cp -a "$CACHE_REPO_PATH/." "$OFFLINE_REPO_PATH/"
+  cp -a "$PACKAGE_REPO_PATH/." "$OFFLINE_REPO_PATH/"
 }
 
 [[ "${EUID:-$(id -u)}" -eq 0 ]] || die "run as root"
@@ -187,7 +179,7 @@ command -v repo-add >/dev/null || die "repo-add is required"
 command -v tar >/dev/null || die "tar is required"
 
 rm -rf "$WORK_PATH"
-mkdir -p "$WORK_PATH" "$OUT_PATH" "$CACHE_PATH"
+mkdir -p "$WORK_PATH" "$OUT_PATH"
 
 cp -a "$ARCHISO_PROFILE" "$PROFILE_PATH"
 brand_iso_profile

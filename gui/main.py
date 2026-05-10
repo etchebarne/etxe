@@ -329,7 +329,35 @@ class InstallerBackend(QObject):
         }
 
         lines = [f"{key}={shlex.quote(str(value))}" for key, value in values.items()]
-        ENV_PATH.write_text("\n".join(lines) + "\n")
+        try:
+            os.chmod(ENV_PATH, 0o600)
+        except FileNotFoundError:
+            pass
+
+        temp_path = ENV_PATH.with_name(f".{ENV_PATH.name}.tmp")
+        fd = os.open(temp_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        try:
+            os.fchmod(fd, 0o600)
+            env_file = os.fdopen(fd, "w")
+            fd = None
+            with env_file:
+                env_file.write("\n".join(lines) + "\n")
+            os.replace(temp_path, ENV_PATH)
+            os.chmod(ENV_PATH, 0o600)
+        except Exception:
+            if fd is not None:
+                os.close(fd)
+            try:
+                temp_path.unlink()
+            except FileNotFoundError:
+                pass
+            raise
+
+    def _remove_env(self):
+        try:
+            ENV_PATH.unlink()
+        except FileNotFoundError:
+            pass
 
     @Slot()
     def refreshDisks(self):
@@ -431,13 +459,19 @@ class InstallerBackend(QObject):
             self._set_install_state("Enter a password.")
             return False
 
-        self._write_env(config)
+        try:
+            self._write_env(config)
+        except OSError as error:
+            self._set_install_state(f"Could not save installer settings: {error}")
+            return False
+
         LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
         LOG_PATH.write_text("")
 
         self._run(["systemctl", "reset-failed", "etxe-install.service"])
         result = self._run(["systemctl", "start", "--no-block", "etxe-install.service"])
         if result.returncode != 0:
+            self._remove_env()
             self._set_install_state(result.stderr.strip() or "Could not start installer.")
             return False
 

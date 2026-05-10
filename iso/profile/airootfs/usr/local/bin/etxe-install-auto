@@ -12,6 +12,10 @@ log() {
 
 log "starting automatic installation"
 
+# systemd has already loaded /etc/etxe/install.env into this process. Remove it
+# early so the plaintext password is not left on disk during installation.
+rm -f /etc/etxe/install.env
+
 udevadm settle
 
 detect_disk() {

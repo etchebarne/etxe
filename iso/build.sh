@@ -12,6 +12,9 @@ TARGET_REPO_PATH="$PROFILE_PATH/airootfs/opt/etxe"
 OFFLINE_REPO_PATH="$TARGET_REPO_PATH/repo/os/x86_64"
 PACKAGE_REPO_PATH="$WORK_PATH/offline-repo/os/x86_64"
 PACMAN_DB_PATH="$WORK_PATH/pacman-db"
+FLATPAK_BUILD_SYSTEM_PATH="$WORK_PATH/flatpak-system"
+FLATPAK_CACHE_PATH="$WORK_PATH/flatpak-cache"
+TARGET_FLATPAK_SYSTEM_ARCHIVE="$TARGET_REPO_PATH/flatpak-system.tar"
 FONT_PATH="$PROFILE_PATH/airootfs/usr/share/fonts/TTF"
 RED_HAT_DISPLAY_URL="https://raw.githubusercontent.com/RedHatOfficial/RedHatFont/master/fonts/Proportional/RedHatDisplay/ttf"
 SKIP_OFFLINE_REPO="${SKIP_OFFLINE_REPO:-NO}"
@@ -171,6 +174,36 @@ sync_offline_repo() {
   cp -a "$PACKAGE_REPO_PATH/." "$OFFLINE_REPO_PATH/"
 }
 
+sync_flatpaks() {
+  local -a flatpaks
+
+  mapfile -t flatpaks < <(grep -Ev '^[[:space:]]*(#|$)' "$REPO_PATH/packages/flatpak.pkglist")
+  [[ "${#flatpaks[@]}" -gt 0 ]] || return 0
+
+  if [[ "$SKIP_OFFLINE_REPO" == "YES" ]]; then
+    log "Skipping bundled Flatpak system"
+    set_env_value "$PROFILE_PATH/airootfs/etc/etxe/install.env" ETXE_REQUIRE_OFFLINE_FLATPAKS NO
+    return 0
+  fi
+
+  command -v flatpak >/dev/null || die "flatpak is required to bundle Flatpak apps"
+
+  log "Downloading bundled Flatpak system"
+  mkdir -p "$FLATPAK_BUILD_SYSTEM_PATH" "$FLATPAK_CACHE_PATH"
+  env \
+    FLATPAK_SYSTEM_DIR="$FLATPAK_BUILD_SYSTEM_PATH" \
+    FLATPAK_SYSTEM_CACHE_DIR="$FLATPAK_CACHE_PATH" \
+    flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  env \
+    FLATPAK_SYSTEM_DIR="$FLATPAK_BUILD_SYSTEM_PATH" \
+    FLATPAK_SYSTEM_CACHE_DIR="$FLATPAK_CACHE_PATH" \
+    flatpak install --system --noninteractive --assumeyes --or-update flathub "${flatpaks[@]}"
+
+  log "Bundling Flatpak system"
+  mkdir -p "$TARGET_REPO_PATH"
+  tar --acls --xattrs -C "$FLATPAK_BUILD_SYSTEM_PATH" -cf "$TARGET_FLATPAK_SYSTEM_ARCHIVE" .
+}
+
 [[ "${EUID:-$(id -u)}" -eq 0 ]] || die "run as root"
 [[ -d "$ARCHISO_PROFILE" ]] || die "missing archiso releng profile: $ARCHISO_PROFILE"
 command -v mkarchiso >/dev/null || die "mkarchiso is required"
@@ -188,6 +221,7 @@ cp -a "$ISO_PATH/profile/airootfs/." "$PROFILE_PATH/airootfs/"
 download_red_hat_display
 bundle_repo
 sync_offline_repo
+sync_flatpaks
 
 cat "$REPO_PATH/packages/iso.pkglist" >>"$PROFILE_PATH/packages.x86_64"
 sort -u "$PROFILE_PATH/packages.x86_64" -o "$PROFILE_PATH/packages.x86_64"

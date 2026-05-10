@@ -90,8 +90,8 @@ cat >"$DOMAIN_XML" <<EOF
   <vcpu placement="static">$VM_VCPUS</vcpu>
   <os firmware="efi">
     <type arch="x86_64" machine="q35">hvm</type>
-    <boot dev="cdrom"/>
     <boot dev="hd"/>
+    <boot dev="cdrom"/>
   </os>
   <features>
     <acpi/>

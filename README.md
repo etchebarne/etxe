@@ -10,7 +10,7 @@ Build a test ISO with:
 sudo ./iso/build.sh
 ```
 
-For a smaller development ISO without the bundled offline package repository, use:
+By default, the ISO bundles both the native package repository and the Flatpak system apps listed in `packages/flatpak.pkglist`. For a smaller development ISO without those offline assets, use:
 
 ```sh
 sudo SKIP_OFFLINE_REPO=YES ./iso/build.sh

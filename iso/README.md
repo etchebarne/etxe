@@ -14,6 +14,24 @@ Output ISOs are written to `iso/out/`.
 
 The build machine needs internet access because native packages, dependencies, and fonts are downloaded for each build.
 
+Create a stopped libvirt VM from the newest ISO in `iso/out/`:
+
+```sh
+./iso/create-vm.sh
+```
+
+This requires libvirt, `virsh`, and UEFI firmware such as `edk2-ovmf`. The VM is defined but not started. It boots in UEFI mode with a 15 GiB disk, 4096 MiB RAM, and 2 vCPUs. It defaults to `qemu:///system`, the `default` storage pool, and the `default` network. Override settings with environment variables, for example:
+
+```sh
+VM_NAME=etxe-test LIBVIRT_URI=qemu:///session ./iso/create-vm.sh
+```
+
+The script prints the exact start command after creating the VM. If you set `VM_NAME=etxe-test`, start it with:
+
+```sh
+virsh --connect qemu:///system start etxe-test
+```
+
 Smaller GUI development ISO:
 
 ```sh

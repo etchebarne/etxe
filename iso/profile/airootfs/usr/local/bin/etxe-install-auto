@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -eEo pipefail
+
+install -d -m 0755 /var/log
+export ETXE_LOG_STARTED=YES
+exec > >(tee -a /var/log/etxe-install.log) 2>&1
+
+log() {
+  printf 'etxe-install-auto: %s\n' "$*"
+}
+
+log "starting automatic installation"
+
+udevadm settle
+
+detect_disk() {
+  local dev name sectors
+
+  for dev in /sys/block/*; do
+    name="${dev##*/}"
+
+    case "$name" in
+      loop*|ram*|zram*|sr*|dm-*|md*) continue ;;
+    esac
+
+    [[ -b "/dev/$name" ]] || continue
+    [[ "$(<"$dev/removable")" == "0" ]] || continue
+
+    sectors="$(<"$dev/size")"
+    [[ "$sectors" -gt 16777216 ]] || continue
+
+    printf '/dev/%s\n' "$name"
+    return 0
+  done
+
+  return 1
+}
+
+for arg in $(</proc/cmdline); do
+  case "$arg" in
+    etxe.disk=*) export DISK="${arg#etxe.disk=}" ;;
+    etxe.hostname=*) export HOSTNAME="${arg#etxe.hostname=}" ;;
+    etxe.username=*) export USERNAME="${arg#etxe.username=}" ;;
+    etxe.timezone=*) export TIMEZONE="${arg#etxe.timezone=}" ;;
+    etxe.locale=*) export LOCALE="${arg#etxe.locale=}" ;;
+    etxe.keymap=*) export KEYMAP="${arg#etxe.keymap=}" ;;
+  esac
+done
+
+if [[ -z "${DISK:-}" ]]; then
+  DISK="$(detect_disk)" || {
+    log "no install disk detected"
+    lsblk -o NAME,TYPE,SIZE,RM,RO,MODEL
+    exit 1
+  }
+  export DISK
+fi
+
+export ETXE_PATH=/opt/etxe
+
+log "using DISK=$DISK"
+log "using HOSTNAME=${HOSTNAME:-} USERNAME=${USERNAME:-} TIMEZONE=${TIMEZONE:-} LOCALE=${LOCALE:-} KEYMAP=${KEYMAP:-}"
+
+exec /bin/bash /opt/etxe/install.sh

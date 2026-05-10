@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -eEo pipefail
+
+export ETXE_PATH=/opt/etxe
+export QT_QPA_PLATFORM=xcb
+export QT_QUICK_CONTROLS_STYLE=Basic
+
+exec /usr/bin/python /opt/etxe/gui/main.py

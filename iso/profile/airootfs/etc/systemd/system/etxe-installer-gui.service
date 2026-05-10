@@ -1,0 +1,23 @@
+[Unit]
+Description=Etxe graphical installer
+Wants=NetworkManager.service systemd-udev-settle.service
+After=NetworkManager.service systemd-udev-settle.service
+Before=getty@tty1.service
+Conflicts=getty@tty1.service
+ConditionPathExists=/opt/etxe/gui/main.py
+OnFailure=getty@tty1.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/bin/etxe-installer-session
+Restart=on-failure
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+
+[Install]
+WantedBy=graphical.target

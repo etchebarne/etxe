@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -eEo pipefail
+
+exec /usr/bin/xinit /usr/local/bin/etxe-installer-gui -- /usr/bin/X :0 -nolisten tcp vt1

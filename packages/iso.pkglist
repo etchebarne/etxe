@@ -1,0 +1,11 @@
+arch-install-scripts
+btrfs-progs
+dosfstools
+gptfdisk
+networkmanager
+noto-fonts
+pyside6
+qt6-declarative
+qt6-svg
+xorg-server
+xorg-xinit

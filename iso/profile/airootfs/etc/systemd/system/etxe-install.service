@@ -1,0 +1,12 @@
+[Unit]
+Description=Etxe backend installer
+Wants=systemd-udev-settle.service
+After=systemd-udev-settle.service
+ConditionPathExists=/opt/etxe/install.sh
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/etxe/install.env
+ExecStart=/bin/bash /usr/local/bin/etxe-install-auto
+StandardOutput=journal
+StandardError=journal

@@ -5,7 +5,7 @@ set -eEo pipefail
 REPO_PATH="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 ISO_PATH="$REPO_PATH/iso"
 ARCHISO_PROFILE="${ARCHISO_PROFILE:-/usr/share/archiso/configs/releng}"
-WORK_PATH="${WORK_PATH:-$ISO_PATH/.work}"
+WORK_PATH="${WORK_PATH:-/var/tmp/etxe-iso-work}"
 OUT_PATH="${OUT_PATH:-$ISO_PATH/out}"
 PROFILE_PATH="$WORK_PATH/profile"
 TARGET_REPO_PATH="$PROFILE_PATH/airootfs/opt/etxe"

@@ -286,6 +286,29 @@ class InstallerBackend(QObject):
     def _run(self, args, check=False):
         return subprocess.run(args, check=check, text=True, capture_output=True)
 
+    def _split_nmcli_terse(self, line):
+        fields = []
+        current = []
+        escaped = False
+
+        for character in line:
+            if escaped:
+                current.append(character)
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == ":":
+                fields.append("".join(current))
+                current = []
+            else:
+                current.append(character)
+
+        if escaped:
+            current.append("\\")
+
+        fields.append("".join(current))
+        return fields
+
     def _systemctl_show(self):
         result = self._run([
             "systemctl",
@@ -404,7 +427,19 @@ class InstallerBackend(QObject):
             self._has_ethernet = has_ethernet
             self.ethernetChanged.emit()
 
-        result = self._run(["nmcli", "-t", "-f", "SSID,SIGNAL,SECURITY", "dev", "wifi", "list", "--rescan", "yes"])
+        result = self._run([
+            "nmcli",
+            "-t",
+            "--escape",
+            "yes",
+            "-f",
+            "SSID,SIGNAL,SECURITY",
+            "dev",
+            "wifi",
+            "list",
+            "--rescan",
+            "yes",
+        ])
         networks = []
         seen = set()
 
@@ -415,15 +450,15 @@ class InstallerBackend(QObject):
             return
 
         for line in result.stdout.splitlines():
-            parts = line.split(":")
+            parts = self._split_nmcli_terse(line)
             if len(parts) < 2:
                 continue
-            ssid = parts[0].replace("\\:", ":").strip()
+            ssid = parts[0].strip()
             if not ssid or ssid in seen:
                 continue
             seen.add(ssid)
             signal = parts[1].strip()
-            security = ":".join(parts[2:]).replace("\\:", ":").strip() if len(parts) > 2 else ""
+            security = ":".join(parts[2:]).strip() if len(parts) > 2 else ""
             networks.append({"ssid": ssid, "signal": signal, "security": security or "Open"})
 
         self._wifi_networks = networks

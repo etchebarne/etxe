@@ -29,7 +29,7 @@ panel.addWidget("org.kde.plasma.pager")
 
 var tasks = panel.addWidget("org.kde.plasma.icontasks")
 tasks.currentConfigGroup = ["General"]
-tasks.writeConfig("launchers", "applications:firefox.desktop")
+tasks.writeConfig("launchers", "applications:org.kde.dolphin.desktop,applications:org.kde.discover.desktop,applications:firefox.desktop")
 
 panel.addWidget("org.kde.plasma.marginsseparator")
 

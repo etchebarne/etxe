@@ -1,10 +1,28 @@
 #!/usr/bin/env bash
 
 etxe_configure_plasma() {
-  local layout_dir
+  local layout_dir look_and_feel_dir
   layout_dir="$ETXE_MOUNT/usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents"
+  look_and_feel_dir="$ETXE_MOUNT/usr/share/plasma/look-and-feel/org.etxe.desktop"
 
   etxe_log "Configuring Plasma defaults"
+
+  install -D -m 0644 "$ETXE_PATH/assets/plasma/look-and-feel/org.etxe.desktop/metadata.json" \
+    "$look_and_feel_dir/metadata.json"
+  install -D -m 0644 "$ETXE_PATH/assets/plasma/look-and-feel/org.etxe.desktop/contents/splash/Splash.qml" \
+    "$look_and_feel_dir/contents/splash/Splash.qml"
+  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon.svg" \
+    "$look_and_feel_dir/contents/splash/images/etxe-icon.svg"
+
+  install -d -m 0755 "$ETXE_MOUNT/etc/xdg" "$ETXE_MOUNT/etc/skel/.config"
+  for ksplashrc in "$ETXE_MOUNT/etc/xdg/ksplashrc" "$ETXE_MOUNT/etc/skel/.config/ksplashrc"; do
+    cat >"$ksplashrc" <<'EOF'
+[KSplash]
+Engine=KSplashQML
+Theme=org.etxe.desktop
+EOF
+  done
+
   install -d -m 0755 "$layout_dir"
   cat >"$layout_dir/layout.js" <<'EOF'
 var panel = new Panel
@@ -24,7 +42,9 @@ if (panel.formFactor === "horizontal") {
     }
 }
 
-panel.addWidget("org.kde.plasma.kickoff")
+var kickoff = panel.addWidget("org.kde.plasma.kickoff")
+kickoff.currentConfigGroup = ["General"]
+kickoff.writeConfig("icon", "etxe-icon-symbolic")
 panel.addWidget("org.kde.plasma.pager")
 
 var tasks = panel.addWidget("org.kde.plasma.icontasks")

@@ -3,6 +3,13 @@
 etxe_configure_branding() {
   etxe_log "Branding system as Etxe"
 
+  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon.svg" \
+    "$ETXE_MOUNT/usr/share/icons/hicolor/scalable/apps/etxe-icon.svg"
+  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
+    "$ETXE_MOUNT/usr/share/icons/hicolor/scalable/apps/etxe-icon-symbolic.svg"
+  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
+    "$ETXE_MOUNT/usr/share/icons/hicolor/symbolic/apps/etxe-icon-symbolic.svg"
+
   rm -f "$ETXE_MOUNT/etc/os-release"
   cat >"$ETXE_MOUNT/etc/os-release" <<'EOF'
 NAME="Etxe"
@@ -15,7 +22,7 @@ DOCUMENTATION_URL="https://wiki.archlinux.org/"
 SUPPORT_URL="https://bbs.archlinux.org/"
 BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
 PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
-LOGO=archlinux-logo
+LOGO=etxe-icon-symbolic
 EOF
 
   printf 'Etxe \\r (\\l)\n' >"$ETXE_MOUNT/etc/issue"

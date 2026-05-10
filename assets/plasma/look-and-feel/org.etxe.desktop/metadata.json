@@ -1,0 +1,16 @@
+{
+  "KPackageStructure": "Plasma/LookAndFeel",
+  "KPlugin": {
+    "Id": "org.etxe.desktop",
+    "Name": "Etxe",
+    "Description": "Etxe Plasma splash screen",
+    "Version": "1.0",
+    "License": "LicenseRef-Etxe",
+    "Authors": [
+      {
+        "Name": "Etxe"
+      }
+    ]
+  },
+  "X-Plasma-APIVersion": "2"
+}

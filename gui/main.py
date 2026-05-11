@@ -259,7 +259,7 @@ class InstallerBackend(QObject):
     def _update_install_phase_from_log(self, log_text):
         checks = [
             ("Installation finished successfully", "Finishing up"),
-            ("Enabling SDDM", "Preparing the sign-in screen"),
+            ("Enabling GDM", "Preparing the sign-in screen"),
             ("Creating user", "Creating your account"),
             ("Configuring PipeWire", "Setting up audio"),
             ("Configuring NetworkManager", "Setting up networking"),

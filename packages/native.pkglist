@@ -9,6 +9,7 @@ dosfstools
 e2fsprogs
 efibootmgr
 sudo
+polkit
 git
 man-db
 man-pages

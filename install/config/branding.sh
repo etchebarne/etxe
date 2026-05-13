@@ -10,20 +10,6 @@ etxe_configure_branding() {
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
     "$ETXE_MOUNT/usr/share/icons/hicolor/symbolic/apps/etxe-icon-symbolic.svg"
 
-  install -d -m 0755 "$ETXE_MOUNT/usr/share/applications"
-  cat >"$ETXE_MOUNT/usr/share/applications/etxe-log-out.desktop" <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=Log Out
-Comment=End the current Etxe session
-Exec=gnome-session-quit --logout
-Icon=system-log-out-symbolic
-Terminal=false
-Categories=System;
-OnlyShowIn=GNOME;
-StartupNotify=false
-EOF
-
   rm -f "$ETXE_MOUNT/etc/os-release"
   cat >"$ETXE_MOUNT/etc/os-release" <<'EOF'
 NAME="Etxe"

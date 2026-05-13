@@ -53,6 +53,18 @@ prompt_default() {
   printf '%s' "${value:-$default_value}"
 }
 
+parse_remote() {
+  local value="$1"
+
+  vm_user="${value%%@*}"
+  vm_host="${value#*@}"
+
+  if [[ "$vm_host" =~ ^(.+):([0-9]+)$ ]]; then
+    vm_host="${BASH_REMATCH[1]}"
+    vm_port="${BASH_REMATCH[2]}"
+  fi
+}
+
 shell_join() {
   local joined=""
   local value
@@ -63,6 +75,18 @@ shell_join() {
   done
 
   printf '%s' "$joined"
+}
+
+ssh_host_key_options() {
+  case "$vm_host" in
+    localhost|127.*)
+      printf '%s\n' \
+        '-o' 'StrictHostKeyChecking=no' \
+        '-o' 'UserKnownHostsFile=/dev/null' \
+        '-o' 'GlobalKnownHostsFile=/dev/null' \
+        '-o' 'LogLevel=ERROR'
+      ;;
+  esac
 }
 
 printf '\nGNOME extension VM copy wizard\n'
@@ -82,6 +106,14 @@ Step 1: In the VM, open Terminal and run exactly this:
 Copy the username printed by whoami.
 Copy the VM IPv4 address from the non-lo line, without the /24 suffix.
 
+If the address is 10.0.2.15, the VM is using QEMU user-mode NAT.
+That guest address is not reachable directly from the host. For VMs created
+with ./iso/create-vm.sh --3d, use the host SSH endpoint printed by that script
+instead, normally:
+
+  Host: 127.0.0.1
+  Port: 2222
+
 Example:
   enp1s0 UP 192.168.122.91/24
 
@@ -92,25 +124,44 @@ EOF
 
 read -r -p 'Press Enter once the VM commands are done...'
 
+vm_port=""
+
 if [[ $# -gt 0 && "$1" == *@* ]]; then
-  vm_user="${1%%@*}"
-  vm_host="${1#*@}"
+  parse_remote "$1"
 else
   vm_user="$(prompt 'VM username from whoami: ')"
-  vm_host="$(prompt 'VM IPv4 address: ')"
+  vm_host="$(prompt 'VM host/IP address: ')"
 fi
 
-vm_port="$(prompt_default 'SSH port [22]: ' '22')"
+if [[ "$vm_host" == 10.0.2.* ]]; then
+  printf '\n%s is QEMU user-mode NAT and is not directly reachable from the host.\n' "$vm_host" >&2
+  printf 'Using the default localhost SSH forward from create-vm.sh --3d.\n\n' >&2
+  vm_host="$(prompt_default 'SSH host [127.0.0.1]: ' '127.0.0.1')"
+  default_port="2222"
+else
+  default_port="22"
+fi
+
+if [[ -z "$vm_port" ]]; then
+  vm_port="$(prompt_default "SSH port [$default_port]: " "$default_port")"
+fi
 remote="$vm_user@$vm_host"
+mapfile -t host_key_options < <(ssh_host_key_options)
+
+if [[ "${#host_key_options[@]}" -gt 0 ]]; then
+  printf '\nUsing ephemeral SSH host-key handling for local VM endpoint %s:%s.\n' "$vm_host" "$vm_port"
+fi
 
 ssh_options=(
   -o PubkeyAuthentication=no
   -o PreferredAuthentications=password
+  "${host_key_options[@]}"
   -p "$vm_port"
 )
 scp_options=(
   -o PubkeyAuthentication=no
   -o PreferredAuthentications=password
+  "${host_key_options[@]}"
   -P "$vm_port"
 )
 

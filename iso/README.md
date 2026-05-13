@@ -38,7 +38,7 @@ For GNOME animation testing, use the 3D profile:
 ./iso/create-vm.sh --3d
 ```
 
-This keeps the normal generated VM name, uses `qemu:///session`, enables virtio 3D acceleration, and uses `egl-headless` for the GL backend with normal SPICE for the console. Set `VM_RENDER_NODE=/dev/dri/renderD128` if the host has multiple render nodes. The script prints the exact `virsh` and `virt-manager` commands to start and open the VM.
+This keeps the normal generated VM name, uses `qemu:///session`, enables virtio 3D acceleration, and uses `egl-headless` for the GL backend with normal SPICE for the console. Session VMs use QEMU user-mode networking, so the guest usually shows `10.0.2.15`, which is not directly reachable from the host. The script forwards host `127.0.0.1:2222` to guest SSH port `22`; override this with `VM_SSH_FORWARD_HOST` or `VM_SSH_FORWARD_PORT` if needed. Set `VM_RENDER_NODE=/dev/dri/renderD128` if the host has multiple render nodes. The script prints the exact `virsh` and `virt-manager` commands to start and open the VM.
 
 If QEMU reports `eglInitialize failed` or `render node init failed`, recreate the VM without 3D acceleration or use a different render node. This is especially relevant on hosts using the proprietary NVIDIA driver because its EGL stack may need `/dev/nvidia*` devices in addition to the DRM render node.
 

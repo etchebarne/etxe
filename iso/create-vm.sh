@@ -61,6 +61,8 @@ VM_DISK_PATH="${VM_DISK_PATH:-}"
 VM_NETWORK_PROVIDED="${VM_NETWORK+x}"
 VM_NETWORK="${VM_NETWORK:-default}"
 VM_RENDER_NODE="${VM_RENDER_NODE:-}"
+VM_SSH_FORWARD_HOST="${VM_SSH_FORWARD_HOST:-127.0.0.1}"
+VM_SSH_FORWARD_PORT="${VM_SSH_FORWARD_PORT:-2222}"
 
 if [[ "$LIBVIRT_URI" == "qemu:///session" ]]; then
   if [[ -z "$VM_DISK_POOL_PROVIDED" && -z "$VM_DISK_PATH" ]]; then
@@ -182,10 +184,30 @@ configure_acceleration() {
 }
 
 configure_network() {
+  local ssh_forward_port
+
+  VM_DOMAIN_XMLNS=""
+  VM_QEMU_COMMANDLINE_XML=""
+
   if [[ "$VM_NETWORK" == "user" ]]; then
-    VM_INTERFACE_XML='    <interface type="user">
-      <model type="virtio"/>
-    </interface>'
+    if [[ ! "$VM_SSH_FORWARD_PORT" =~ ^[0-9]+$ ]]; then
+      die "VM_SSH_FORWARD_PORT must be a TCP port number"
+    fi
+    ssh_forward_port=$((10#$VM_SSH_FORWARD_PORT))
+    if (( ssh_forward_port < 1 || ssh_forward_port > 65535 )); then
+      die "VM_SSH_FORWARD_PORT must be between 1 and 65535"
+    fi
+    [[ -n "$VM_SSH_FORWARD_HOST" ]] || die "VM_SSH_FORWARD_HOST cannot be empty"
+
+    VM_DOMAIN_XMLNS=' xmlns:qemu="http://libvirt.org/schemas/domain/qemu/1.0"'
+    VM_INTERFACE_XML=''
+    VM_QEMU_COMMANDLINE_XML="  <qemu:commandline>
+    <qemu:arg value=\"-netdev\"/>
+    <qemu:arg value=\"user,id=etxenet0,hostfwd=tcp:$(xml_escape "$VM_SSH_FORWARD_HOST"):$ssh_forward_port-:22\"/>
+    <qemu:arg value=\"-device\"/>
+    <qemu:arg value=\"virtio-net-pci,netdev=etxenet0,bus=pcie.0,addr=0x05\"/>
+  </qemu:commandline>
+"
   else
     VM_INTERFACE_XML="    <interface type=\"network\">
       <source network=\"$(xml_escape "$VM_NETWORK")\"/>
@@ -256,6 +278,7 @@ else
 fi
 if [[ "$VM_NETWORK" == "user" ]]; then
   log "Using user-mode networking"
+  log "Forwarding host SSH $VM_SSH_FORWARD_HOST:$VM_SSH_FORWARD_PORT to VM port 22"
 else
   log "Using libvirt network: $VM_NETWORK"
 fi
@@ -271,7 +294,7 @@ fi
 create_disk
 
 cat >"$DOMAIN_XML" <<EOF
-<domain type="kvm">
+<domain type="kvm"$VM_DOMAIN_XMLNS>
   <name>$(xml_escape "$VM_NAME")</name>
   <memory unit="MiB">$VM_RAM_MB</memory>
   <currentMemory unit="MiB">$VM_RAM_MB</currentMemory>
@@ -311,7 +334,7 @@ $VM_VIDEO_MODEL_XML
       <target type="virtio" name="com.redhat.spice.0"/>
     </channel>
   </devices>
-</domain>
+$VM_QEMU_COMMANDLINE_XML</domain>
 EOF
 
 virsh --connect "$LIBVIRT_URI" define "$DOMAIN_XML" >/dev/null
@@ -321,3 +344,6 @@ DISK_FILE_CREATED=NO
 log "Created $VM_NAME"
 log "Start it with: virsh --connect $LIBVIRT_URI start $VM_NAME"
 log "Open it with: virt-manager --connect $LIBVIRT_URI --show-domain-console $VM_NAME"
+if [[ "$VM_NETWORK" == "user" ]]; then
+  log "SSH/scp host endpoint: $VM_SSH_FORWARD_HOST port $VM_SSH_FORWARD_PORT"
+fi

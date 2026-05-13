@@ -10,4 +10,4 @@ For VM testing from the host, run:
 ./extensions/scp-extensions.sh
 ```
 
-The wizard explains what to run inside the VM, asks for the VM username and IP address, copies every extension, and adds them to GNOME's enabled extension list.
+The wizard explains what to run inside the VM, asks for the VM username and SSH endpoint, copies every extension, and adds them to GNOME's enabled extension list. For `./iso/create-vm.sh --3d` VMs, use the localhost SSH endpoint printed by `create-vm.sh` instead of the guest's `10.0.2.15` address.

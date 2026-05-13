@@ -235,6 +235,7 @@ class UninstallDialog {
 
     const layout = new St.BoxLayout({
       style_class: 'prompt-dialog-main-layout',
+      style: 'spacing: 18px;',
       vertical: false,
     });
 
@@ -242,7 +243,10 @@ class UninstallDialog {
     if (icon)
       layout.add_child(icon);
 
-    const textLayout = new St.BoxLayout({vertical: true});
+    const textLayout = new St.BoxLayout({
+      style: 'spacing: 12px;',
+      vertical: true,
+    });
 
     const headline = new St.Label({
       text: `Uninstall "${appName}"?`,
@@ -281,23 +285,8 @@ class UninstallDialog {
   }
 
   _buildBodyText() {
-    if (this._pkg.type === PackageType.FLATPAK) {
-      const scope = this._pkg.scope ? ` (${this._pkg.scope})` : '';
-      return `This will uninstall Flatpak app ${this._pkg.identifier}${scope}.`;
-    }
-
-    const origin = this._pkg.origin === 'foreign' ? 'AUR/foreign' : 'repository';
-    let body = `This will remove ${origin} package ${this._pkg.identifier} with pacman -Rns.`;
-    body += '\nPacman will only remove dependencies that are not required by other packages.';
-
-    if (this._pacmanPreview.length > 0) {
-      const maxShown = 12;
-      const shown = this._pacmanPreview.slice(0, maxShown).join(', ');
-      const remaining = this._pacmanPreview.length - maxShown;
-      body += `\n\nPacman plans to remove: ${shown}`;
-      if (remaining > 0)
-        body += `, and ${remaining} more`;
-    }
+    let body = 'This will remove the app from this computer.';
+    body += ' Your personal files will not be deleted.';
 
     return body;
   }

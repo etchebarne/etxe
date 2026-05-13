@@ -10,6 +10,8 @@ import * as ModalDialog from 'resource:///org/gnome/shell/ui/modalDialog.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 const MENU_METHOD_CANDIDATES = ['popupMenu', '_buildMenu', '_createMenu'];
+const GNOME_SHELL_GETTEXT_DOMAIN = 'gnome-shell';
+const GNOME_SOFTWARE_GETTEXT_DOMAIN = 'gnome-software';
 
 const PackageType = Object.freeze({
   FLATPAK: 'flatpak',
@@ -98,6 +100,18 @@ function notify(title, body = '') {
   } catch (error) {
     console.warn(`[AppGridUninstall] ${title}: ${body} (${error.message})`);
   }
+}
+
+function gettextFrom(domain, text) {
+  return GLib.dgettext(domain, text);
+}
+
+function cancelLabel() {
+  return gettextFrom(GNOME_SHELL_GETTEXT_DOMAIN, 'Cancel');
+}
+
+function uninstallLabel() {
+  return gettextFrom(GNOME_SOFTWARE_GETTEXT_DOMAIN, 'Uninstall');
 }
 
 function lineWrap(label) {
@@ -266,13 +280,13 @@ class UninstallDialog {
     dialog.contentLayout.add_child(layout);
 
     dialog.addButton({
-      label: 'Cancel',
+      label: cancelLabel(),
       action: () => dialog.close(),
       key: Clutter.KEY_Escape,
     });
 
     dialog.addButton({
-      label: 'Uninstall',
+      label: uninstallLabel(),
       action: () => {
         dialog.close();
         this._onConfirm();
@@ -478,7 +492,7 @@ class AppGridMenuPatcher {
       return;
 
     const separator = new PopupMenu.PopupSeparatorMenuItem();
-    const item = new PopupMenu.PopupMenuItem('Uninstall...');
+    const item = new PopupMenu.PopupMenuItem(`${uninstallLabel()}...`);
     const activateId = item.connect('activate', () => {
       this._manager.start(app).catch(error => {
         notify('Cannot uninstall application', error.message);
@@ -487,7 +501,7 @@ class AppGridMenuPatcher {
 
     if (isProtectedApp(app)) {
       item.setSensitive(false);
-      item.label.set_text('Uninstall (protected)');
+      item.label.set_text(`${uninstallLabel()} (protected)`);
     }
 
     menu.addMenuItem(separator);

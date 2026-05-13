@@ -56,6 +56,9 @@ EOF
 [org/gnome/desktop/interface]
 clock-show-weekday=true
 enable-animations=true
+
+[org/gnome/settings-daemon/plugins/housekeeping]
+donation-reminder-enabled=false
 EOF
 
   arch-chroot "$ETXE_MOUNT" dconf update

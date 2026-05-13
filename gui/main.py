@@ -348,7 +348,7 @@ class InstallerBackend(QObject):
             "CONFIRM_WIPE": "YES",
             "ETXE_REQUIRE_OFFLINE_REPO": "YES",
             "ETXE_REQUIRE_OFFLINE_FLATPAKS": "YES",
-            "ETXE_AUTOLOGIN": "YES" if config.get("autologin", True) else "NO",
+            "ETXE_AUTOLOGIN": "YES" if config.get("autologin", False) else "NO",
             "ETXE_FINISH_ACTION": "none",
         }
 

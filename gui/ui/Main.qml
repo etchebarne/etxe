@@ -144,7 +144,7 @@ ApplicationWindow {
         property string hostname: "etxe"
         property string username: ""
         property string password: ""
-        property bool autologin: true
+        property bool autologin: false
     }
 
     Connections {

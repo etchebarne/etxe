@@ -55,6 +55,7 @@ EOF
 
 [org/gnome/desktop/interface]
 clock-show-weekday=true
+enable-animations=true
 EOF
 
   arch-chroot "$ETXE_MOUNT" dconf update

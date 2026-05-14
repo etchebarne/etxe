@@ -13,6 +13,7 @@ ETXE_UPDATE_ASSUME_YES="${ETXE_UPDATE_ASSUME_YES:-YES}"
 ETXE_UPDATE_INSTALL_SYSTEM_COPY="${ETXE_UPDATE_INSTALL_SYSTEM_COPY:-YES}"
 
 source "$ETXE_INSTALL/helpers/logging.sh"
+source "$ETXE_INSTALL/helpers/keyboard.sh"
 source "$ETXE_INSTALL/helpers/packages.sh"
 source "$ETXE_INSTALL/helpers/payload.sh"
 
@@ -205,6 +206,8 @@ EOF
 etxe_configure_gnome_dconf() {
   local enabled_extensions_value=""
   local extension_uuid
+  local input_sources_value
+  local keymap
 
   etxe_update_require_command dconf
 
@@ -216,6 +219,9 @@ etxe_configure_gnome_dconf() {
     fi
     enabled_extensions_value+="'$extension_uuid'"
   done
+
+  keymap="$(etxe_keyboard_current_keymap)"
+  input_sources_value="$(etxe_keyboard_gnome_input_sources_value "$keymap")"
 
   install -d -m 0755 /etc/dconf/db/local.d /etc/dconf/profile
   cat >/etc/dconf/profile/user <<'EOF'
@@ -234,6 +240,13 @@ EOF
 [org/gnome/desktop/interface]
 clock-show-weekday=true
 enable-animations=true
+EOF
+  printf '[org/gnome/desktop/input-sources]\n' >>/etc/dconf/db/local.d/00-etxe
+  printf 'sources=[%s]\n' "$input_sources_value" >>/etc/dconf/db/local.d/00-etxe
+  printf 'mru-sources=[%s]\n' "$input_sources_value" >>/etc/dconf/db/local.d/00-etxe
+  printf 'current=uint32 0\n' >>/etc/dconf/db/local.d/00-etxe
+  printf 'show-all-sources=true\n\n' >>/etc/dconf/db/local.d/00-etxe
+  cat >>/etc/dconf/db/local.d/00-etxe <<'EOF'
 
 [org/gnome/settings-daemon/plugins/housekeeping]
 donation-reminder-enabled=false

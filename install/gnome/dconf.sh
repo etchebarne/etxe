@@ -5,6 +5,8 @@ etxe_configure_gnome_dconf() {
 
   local enabled_extensions_value=""
   local extension_uuid
+  local input_sources_value
+  local keymap
   local -a enabled_extensions=()
 
   if declare -p ETXE_GNOME_ENABLED_EXTENSIONS >/dev/null 2>&1; then
@@ -17,6 +19,9 @@ etxe_configure_gnome_dconf() {
     fi
     enabled_extensions_value+="'$extension_uuid'"
   done
+
+  keymap="$(etxe_keyboard_current_keymap "$ETXE_MOUNT")"
+  input_sources_value="$(etxe_keyboard_gnome_input_sources_value "$keymap" "$ETXE_MOUNT")"
 
   install -d -m 0755 "$ETXE_MOUNT/etc/dconf/db/local.d" "$ETXE_MOUNT/etc/dconf/profile"
   cat >"$ETXE_MOUNT/etc/dconf/profile/user" <<'EOF'
@@ -35,6 +40,13 @@ EOF
 [org/gnome/desktop/interface]
 clock-show-weekday=true
 enable-animations=true
+EOF
+  printf '[org/gnome/desktop/input-sources]\n' >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
+  printf 'sources=[%s]\n' "$input_sources_value" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
+  printf 'mru-sources=[%s]\n' "$input_sources_value" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
+  printf 'current=uint32 0\n' >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
+  printf 'show-all-sources=true\n\n' >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
+  cat >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe" <<'EOF'
 
 [org/gnome/settings-daemon/plugins/housekeeping]
 donation-reminder-enabled=false

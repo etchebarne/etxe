@@ -49,6 +49,15 @@ EOF
 [org/gnome/login-screen]
 logo='/usr/share/pixmaps/etxe-logo.svg'
 
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/etxe/etxe-light.png'
+picture-uri-dark='file:///usr/share/backgrounds/etxe/etxe-dark.png'
+picture-options='zoom'
+
+[org/gnome/desktop/screensaver]
+picture-uri='file:///usr/share/backgrounds/etxe/etxe-dark.png'
+picture-options='zoom'
+
 [org/gnome/desktop/interface]
 clock-show-weekday=true
 enable-animations=true

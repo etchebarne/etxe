@@ -3,6 +3,8 @@
 etxe_configure_branding() {
   etxe_log "Branding system as Etxe"
 
+  local background_file
+
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon.svg" \
     "$ETXE_MOUNT/usr/share/icons/hicolor/scalable/apps/etxe-icon.svg"
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
@@ -13,6 +15,12 @@ etxe_configure_branding() {
     "$ETXE_MOUNT/usr/share/icons/hicolor/symbolic/apps/etxe-logo-symbolic.svg"
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
     "$ETXE_MOUNT/usr/share/pixmaps/etxe-logo.svg"
+
+  for background_file in "$ETXE_PATH"/assets/backgrounds/*; do
+    [[ -f "$background_file" ]] || continue
+    install -D -m 0644 "$background_file" \
+      "$ETXE_MOUNT/usr/share/backgrounds/etxe/${background_file##*/}"
+  done
 
   if [[ -x "$ETXE_MOUNT/usr/bin/gtk-update-icon-cache" ]]; then
     arch-chroot "$ETXE_MOUNT" gtk-update-icon-cache -q -f /usr/share/icons/hicolor \

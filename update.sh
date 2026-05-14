@@ -249,6 +249,15 @@ EOF
 [org/gnome/login-screen]
 logo='/usr/share/pixmaps/etxe-logo.svg'
 
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/etxe/etxe-light.png'
+picture-uri-dark='file:///usr/share/backgrounds/etxe/etxe-dark.png'
+picture-options='zoom'
+
+[org/gnome/desktop/screensaver]
+picture-uri='file:///usr/share/backgrounds/etxe/etxe-dark.png'
+picture-options='zoom'
+
 [org/gnome/desktop/interface]
 clock-show-weekday=true
 enable-animations=true
@@ -270,6 +279,8 @@ EOF
 etxe_update_branding() {
   etxe_log "Updating Etxe branding"
 
+  local background_file
+
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon.svg" \
     /usr/share/icons/hicolor/scalable/apps/etxe-icon.svg
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
@@ -280,6 +291,13 @@ etxe_update_branding() {
     /usr/share/icons/hicolor/symbolic/apps/etxe-logo-symbolic.svg
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
     /usr/share/pixmaps/etxe-logo.svg
+
+  for background_file in "$ETXE_PATH"/assets/backgrounds/*; do
+    [[ -f "$background_file" ]] || continue
+    install -D -m 0644 "$background_file" \
+      "/usr/share/backgrounds/etxe/${background_file##*/}"
+  done
+
   rm -f \
     /usr/share/icons/hicolor/scalable/apps/etxe-icon-symbolic.svg \
     /usr/share/icons/hicolor/symbolic/apps/etxe-icon-symbolic.svg

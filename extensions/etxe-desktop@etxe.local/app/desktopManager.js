@@ -138,7 +138,7 @@ var DesktopManager = class {
                 if (key === 'color-scheme') {
                     this._checkApplyDarkModeSetting();
                 } else if (key === 'accent-color') {
-                    this._reloadSelectionColor();
+                    this._reloadAccentColor();
                 }
             });
         }
@@ -496,6 +496,22 @@ var DesktopManager = class {
         this._setSelectionColor();
         for (let desktop of this._desktops) {
             desktop.queue_draw();
+        }
+    }
+
+    _reloadAccentColor() {
+        this._reloadSelectionColor();
+        for (let item of this._fileList) {
+            if (!item.isDirectory && !item.isStackMarker) {
+                continue;
+            }
+
+            let update = item.updateIcon();
+            if (update && update.catch) {
+                update.catch(e => {
+                    print(`Exception while updating an accent-tinted folder icon: ${e.message}\n${e.stack}`);
+                });
+            }
         }
     }
 

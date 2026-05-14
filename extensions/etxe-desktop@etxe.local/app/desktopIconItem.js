@@ -758,9 +758,33 @@ var desktopIconItem = class desktopIconItem extends SignalManager.SignalManager 
             itemIcon = theme.load_icon_for_scale('text-x-generic', Prefs.get_icon_size(), scale, Gtk.IconLookupFlags.FORCE_SIZE);
         }
 
+        itemIcon = this._tintFolderIconIfNeeded(itemIcon);
         itemIcon = this._addEmblemsToPixbufIfNeeded(itemIcon);
 
         return itemIcon;
+    }
+
+    _tintFolderIconIfNeeded(pixbuf) {
+        const isNormalFolder = this._isDirectory && this._fileExtra == Enums.FileType.NONE;
+        const isStackFolder = this.isStackTop;
+        if ((!isNormalFolder && !isStackFolder) || !this._desktopManager.selectColor) {
+            return pixbuf;
+        }
+
+        const accent = this._desktopManager.selectColor;
+        const surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, pixbuf.width, pixbuf.height);
+        const cr = new Cairo.Context(surface);
+        Gdk.cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
+        cr.paint();
+        cr.setOperator(Cairo.Operator.HSL_COLOR);
+        cr.setSourceRGBA(accent.red, accent.green, accent.blue, 1.0);
+        cr.paint();
+        cr.setOperator(Cairo.Operator.DEST_IN);
+        Gdk.cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
+        cr.paint();
+        cr.$dispose();
+
+        return Gdk.pixbuf_get_from_surface(surface, 0, 0, pixbuf.width, pixbuf.height);
     }
 
     /** *********************

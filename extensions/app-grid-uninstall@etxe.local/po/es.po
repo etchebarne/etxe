@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Aplicación"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "¿Desinstalar \"%s\"?"
+
+msgid "This will remove the app from this computer."
+msgstr "Esto eliminará la aplicación de este equipo."
+
+msgid "Your personal files will not be deleted."
+msgstr "Tus archivos personales no se eliminarán."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "No se puede desinstalar \"%s\""
+
+msgid "OK"
+msgstr "Aceptar"
+
+msgid "This is a protected GNOME system application."
+msgstr "Esta es una aplicación protegida del sistema GNOME."
+
+msgid "Cannot uninstall application"
+msgstr "No se puede desinstalar la aplicación"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "No se pudo determinar si este lanzador pertenece a un paquete Flatpak o pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "El paquete %s está protegido porque eliminarlo puede romper el escritorio o el gestor de paquetes."
+
+msgid "Required uninstall tool is not installed."
+msgstr "La herramienta de desinstalación necesaria no está instalada."
+
+msgid "Uninstalling application"
+msgstr "Desinstalando aplicación"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "Eliminando %s..."
+
+msgid "Application uninstalled"
+msgstr "Aplicación desinstalada"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s se eliminó correctamente."
+
+msgid "The uninstall command failed."
+msgstr "Falló el comando de desinstalación."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "No se pudo desinstalar %s"
+
+msgid "protected"
+msgstr "protegido"

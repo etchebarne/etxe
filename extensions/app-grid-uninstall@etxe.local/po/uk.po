@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Застосунок"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "Вилучити \"%s\"?"
+
+msgid "This will remove the app from this computer."
+msgstr "Це вилучить застосунок із цього комп'ютера."
+
+msgid "Your personal files will not be deleted."
+msgstr "Ваші особисті файли не буде видалено."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "Не вдалося вилучити \"%s\""
+
+msgid "OK"
+msgstr "OK"
+
+msgid "This is a protected GNOME system application."
+msgstr "Це захищений системний застосунок GNOME."
+
+msgid "Cannot uninstall application"
+msgstr "Не вдалося вилучити застосунок"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "Не вдалося визначити, чи належить цей ярлик пакету Flatpak або pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "Пакет %s захищено, оскільки його вилучення може порушити роботу стільниці або менеджера пакунків."
+
+msgid "Required uninstall tool is not installed."
+msgstr "Потрібний інструмент вилучення не встановлено."
+
+msgid "Uninstalling application"
+msgstr "Вилучення застосунку"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "Вилучення %s..."
+
+msgid "Application uninstalled"
+msgstr "Застосунок вилучено"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s успішно вилучено."
+
+msgid "The uninstall command failed."
+msgstr "Команда вилучення завершилася невдало."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "Не вдалося вилучити %s"
+
+msgid "protected"
+msgstr "захищено"

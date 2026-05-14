@@ -2,6 +2,41 @@
 
 ETXE_GNOME_ENABLED_EXTENSIONS=()
 
+etxe_gnome_extension_gettext_domain() {
+  local metadata="$1"
+  local line
+
+  while IFS= read -r line; do
+    if [[ "$line" =~ \"gettext-domain\"[[:space:]]*:[[:space:]]*\"([^\"]+)\" ]]; then
+      printf '%s\n' "${BASH_REMATCH[1]}"
+      return 0
+    fi
+  done <"$metadata"
+}
+
+etxe_compile_gnome_extension_translations() {
+  local extension_dest="$1"
+  local linguas="$extension_dest/po/LINGUAS"
+  local domain lang output_dir
+
+  [[ -f "$linguas" ]] || return 0
+
+  domain="$(etxe_gnome_extension_gettext_domain "$extension_dest/metadata.json")"
+  [[ -n "$domain" && "$domain" != */* && "$domain" != *..* ]] || etxe_die "invalid gettext domain for ${extension_dest##*/}"
+
+  rm -rf "$extension_dest/locale"
+
+  while IFS= read -r lang; do
+    [[ -n "$lang" && "$lang" != \#* ]] || continue
+    [[ "$lang" != */* && "$lang" != *..* ]] || etxe_die "invalid locale $lang for ${extension_dest##*/}"
+    [[ -f "$extension_dest/po/$lang.po" ]] || etxe_die "missing $lang translation for ${extension_dest##*/}"
+
+    output_dir="$extension_dest/locale/$lang/LC_MESSAGES"
+    install -d -m 0755 "$output_dir"
+    msgfmt -c -o "$output_dir/$domain.mo" "$extension_dest/po/$lang.po"
+  done <"$linguas"
+}
+
 etxe_install_gnome_extensions() {
   etxe_log "Installing GNOME extensions"
 
@@ -25,6 +60,7 @@ etxe_install_gnome_extensions() {
     extension_dest="$extension_dest_root/$extension_uuid"
     install -d -m 0755 "$extension_dest"
     cp -a "$extension_dir/." "$extension_dest/"
+    etxe_compile_gnome_extension_translations "$extension_dest"
     if [[ -d "$extension_dest/schemas" ]]; then
       arch-chroot "$ETXE_MOUNT" glib-compile-schemas "/usr/share/gnome-shell/extensions/$extension_uuid/schemas"
     fi

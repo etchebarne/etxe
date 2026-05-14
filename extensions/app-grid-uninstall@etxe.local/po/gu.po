@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Gujarati\n"
+"Language: gu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "એપ્લિકેશન"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "\"%s\" અનઇન્સ્ટોલ કરવું છે?"
+
+msgid "This will remove the app from this computer."
+msgstr "આ આ કમ્પ્યુટરમાંથી એપને દૂર કરશે."
+
+msgid "Your personal files will not be deleted."
+msgstr "તમારી વ્યક્તિગત ફાઇલો કાઢી નાખવામાં નહીં આવે."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "\"%s\" અનઇન્સ્ટોલ કરી શકાતું નથી"
+
+msgid "OK"
+msgstr "બરાબર"
+
+msgid "This is a protected GNOME system application."
+msgstr "આ સુરક્ષિત GNOME સિસ્ટમ એપ્લિકેશન છે."
+
+msgid "Cannot uninstall application"
+msgstr "એપ્લિકેશન અનઇન્સ્ટોલ કરી શકાતી નથી"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "આ લોન્ચર Flatpak અથવા pacman પેકેજનું છે કે નહીં તે નક્કી કરી શકાયું નથી."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "પેકેજ %s સુરક્ષિત છે કારણ કે તેને દૂર કરવાથી ડેસ્કટોપ અથવા પેકેજ મેનેજર બગડી શકે છે."
+
+msgid "Required uninstall tool is not installed."
+msgstr "જરૂરી અનઇન્સ્ટોલ સાધન ઇન્સ્ટોલ નથી."
+
+msgid "Uninstalling application"
+msgstr "એપ્લિકેશન અનઇન્સ્ટોલ થઈ રહી છે"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "%s દૂર થઈ રહ્યું છે..."
+
+msgid "Application uninstalled"
+msgstr "એપ્લિકેશન અનઇન્સ્ટોલ થઈ"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s સફળતાપૂર્વક દૂર થયું."
+
+msgid "The uninstall command failed."
+msgstr "અનઇન્સ્ટોલ આદેશ નિષ્ફળ ગયો."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "%s અનઇન્સ્ટોલ કરવામાં નિષ્ફળ"
+
+msgid "protected"
+msgstr "સુરક્ષિત"

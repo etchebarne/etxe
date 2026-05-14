@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Kannada\n"
+"Language: kn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "ಅನ್ವಯ"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "\"%s\" ಅನ್ನು ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಬೇಕೇ?"
+
+msgid "This will remove the app from this computer."
+msgstr "ಇದು ಈ ಕಂಪ್ಯೂಟರ್‌ನಿಂದ ಆಪ್ ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ."
+
+msgid "Your personal files will not be deleted."
+msgstr "ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಕಡತಗಳನ್ನು ಅಳಿಸಲಾಗುವುದಿಲ್ಲ."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "\"%s\" ಅನ್ನು ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ"
+
+msgid "OK"
+msgstr "ಸರಿ"
+
+msgid "This is a protected GNOME system application."
+msgstr "ಇದು ರಕ್ಷಿತ GNOME ವ್ಯವಸ್ಥೆಯ ಅನ್ವಯವಾಗಿದೆ."
+
+msgid "Cannot uninstall application"
+msgstr "ಅನ್ವಯವನ್ನು ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "ಈ ಲಾಂಚರ್ Flatpak ಅಥವಾ pacman ಪ್ಯಾಕೇಜ್‌ಗೆ ಸೇರಿದದೆಯೇ ಎಂದು ನಿರ್ಧರಿಸಲಾಗಲಿಲ್ಲ."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "ಪ್ಯಾಕೇಜ್ %s ರಕ್ಷಿತವಾಗಿದೆ, ಏಕೆಂದರೆ ಅದನ್ನು ತೆಗೆದುಹಾಕುವುದು ಡೆಸ್ಕ್‌ಟಾಪ್ ಅಥವಾ ಪ್ಯಾಕೇಜ್ ವ್ಯವಸ್ಥಾಪಕವನ್ನು ಹಾನಿಗೊಳಿಸಬಹುದು."
+
+msgid "Required uninstall tool is not installed."
+msgstr "ಅಗತ್ಯವಿರುವ ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಸಾಧನ ಸ್ಥಾಪಿಸಲಾಗಿಲ್ಲ."
+
+msgid "Uninstalling application"
+msgstr "ಅನ್ವಯವನ್ನು ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲಾಗುತ್ತಿದೆ"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "%s ತೆಗೆದುಹಾಕಲಾಗುತ್ತಿದೆ..."
+
+msgid "Application uninstalled"
+msgstr "ಅನ್ವಯವನ್ನು ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲಾಗಿದೆ"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ."
+
+msgid "The uninstall command failed."
+msgstr "ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಆಜ್ಞೆ ವಿಫಲವಾಯಿತು."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "%s ಅನ್ನು ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ"
+
+msgid "protected"
+msgstr "ರಕ್ಷಿತ"

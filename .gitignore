@@ -2,3 +2,4 @@ iso/out/
 *.iso
 __pycache__/
 *.pyc
+extensions/*/locale/

@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Urdu\n"
+"Language: ur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "ایپلیکیشن"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "\"%s\" اَن انسٹال کریں؟"
+
+msgid "This will remove the app from this computer."
+msgstr "یہ ایپ کو اس کمپیوٹر سے ہٹا دے گا۔"
+
+msgid "Your personal files will not be deleted."
+msgstr "آپ کی ذاتی فائلیں حذف نہیں کی جائیں گی۔"
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "\"%s\" اَن انسٹال نہیں ہو سکتی"
+
+msgid "OK"
+msgstr "ٹھیک ہے"
+
+msgid "This is a protected GNOME system application."
+msgstr "یہ ایک محفوظ GNOME سسٹم ایپلیکیشن ہے۔"
+
+msgid "Cannot uninstall application"
+msgstr "ایپلیکیشن اَن انسٹال نہیں ہو سکتی"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "یہ تعین نہیں کیا جا سکا کہ یہ لانچر Flatpak یا pacman پیکیج سے تعلق رکھتا ہے۔"
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "پیکیج %s محفوظ ہے کیونکہ اسے ہٹانے سے ڈیسک ٹاپ یا پیکیج مینیجر خراب ہو سکتا ہے۔"
+
+msgid "Required uninstall tool is not installed."
+msgstr "درکار اَن انسٹال ٹول نصب نہیں ہے۔"
+
+msgid "Uninstalling application"
+msgstr "ایپلیکیشن اَن انسٹال ہو رہی ہے"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "%s ہٹایا جا رہا ہے..."
+
+msgid "Application uninstalled"
+msgstr "ایپلیکیشن اَن انسٹال ہو گئی"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s کامیابی سے ہٹا دیا گیا۔"
+
+msgid "The uninstall command failed."
+msgstr "اَن انسٹال کمانڈ ناکام ہو گئی۔"
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "%s اَن انسٹال کرنے میں ناکامی"
+
+msgid "protected"
+msgstr "محفوظ"

@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "アプリケーション"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "\"%s\" をアンインストールしますか?"
+
+msgid "This will remove the app from this computer."
+msgstr "このアプリをこのコンピューターから削除します。"
+
+msgid "Your personal files will not be deleted."
+msgstr "個人ファイルは削除されません。"
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "\"%s\" をアンインストールできません"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "This is a protected GNOME system application."
+msgstr "これは保護された GNOME システムアプリケーションです。"
+
+msgid "Cannot uninstall application"
+msgstr "アプリケーションをアンインストールできません"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "このランチャーが Flatpak または pacman パッケージに属しているか判断できませんでした。"
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "パッケージ %s は保護されています。削除するとデスクトップまたはパッケージマネージャーが壊れる可能性があります。"
+
+msgid "Required uninstall tool is not installed."
+msgstr "必要なアンインストールツールがインストールされていません。"
+
+msgid "Uninstalling application"
+msgstr "アプリケーションをアンインストール中"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "%s を削除中..."
+
+msgid "Application uninstalled"
+msgstr "アプリケーションをアンインストールしました"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s を正常に削除しました。"
+
+msgid "The uninstall command failed."
+msgstr "アンインストールコマンドに失敗しました。"
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "%s のアンインストールに失敗しました"
+
+msgid "protected"
+msgstr "保護済み"

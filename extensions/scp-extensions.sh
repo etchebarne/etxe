@@ -7,6 +7,14 @@ remote_extension_root=".local/share/gnome-shell/extensions"
 
 extension_uuids=()
 extension_dirs=()
+staging_root=""
+staged_extension_dirs=()
+
+cleanup() {
+  [[ -z "$staging_root" ]] || rm -rf "$staging_root"
+}
+
+trap cleanup EXIT
 
 for extension_dir in "$script_dir"/*; do
   [[ -d "$extension_dir" ]] || continue
@@ -77,6 +85,70 @@ shell_join() {
   printf '%s' "$joined"
 }
 
+extension_gettext_domain() {
+  local metadata="$1"
+  local line
+
+  while IFS= read -r line; do
+    if [[ "$line" =~ \"gettext-domain\"[[:space:]]*:[[:space:]]*\"([^\"]+)\" ]]; then
+      printf '%s\n' "${BASH_REMATCH[1]}"
+      return 0
+    fi
+  done <"$metadata"
+}
+
+compile_extension_translations() {
+  local extension_dir="$1"
+  local linguas="$extension_dir/po/LINGUAS"
+  local domain lang output_dir
+
+  [[ -f "$linguas" ]] || return 0
+
+  command -v msgfmt >/dev/null || {
+    printf 'msgfmt is required to compile extension translations. Install gettext.\n' >&2
+    exit 1
+  }
+
+  domain="$(extension_gettext_domain "$extension_dir/metadata.json")"
+  [[ -n "$domain" && "$domain" != */* && "$domain" != *..* ]] || {
+    printf 'Invalid gettext domain for %s\n' "${extension_dir##*/}" >&2
+    exit 1
+  }
+
+  rm -rf "$extension_dir/locale"
+
+  while IFS= read -r lang; do
+    [[ -n "$lang" && "$lang" != \#* ]] || continue
+    [[ "$lang" != */* && "$lang" != *..* ]] || {
+      printf 'Invalid locale %s for %s\n' "$lang" "${extension_dir##*/}" >&2
+      exit 1
+    }
+    [[ -f "$extension_dir/po/$lang.po" ]] || {
+      printf 'Missing %s translation for %s\n' "$lang" "${extension_dir##*/}" >&2
+      exit 1
+    }
+
+    output_dir="$extension_dir/locale/$lang/LC_MESSAGES"
+    mkdir -p "$output_dir"
+    msgfmt -c -o "$output_dir/$domain.mo" "$extension_dir/po/$lang.po"
+  done <"$linguas"
+}
+
+stage_extensions() {
+  local index extension_uuid extension_dir staged_dir
+
+  staging_root="$(mktemp -d)"
+
+  for index in "${!extension_uuids[@]}"; do
+    extension_uuid="${extension_uuids[$index]}"
+    extension_dir="${extension_dirs[$index]}"
+    cp -a "$extension_dir" "$staging_root/"
+    staged_dir="$staging_root/$extension_uuid"
+    compile_extension_translations "$staged_dir"
+    staged_extension_dirs+=("$staged_dir")
+  done
+}
+
 ssh_host_key_options() {
   case "$vm_host" in
     localhost|127.*)
@@ -93,6 +165,9 @@ printf '\nGNOME extension VM copy wizard\n'
 printf '================================\n\n'
 printf 'This will copy and enable these extensions in your VM:\n'
 print_extensions
+
+printf '\nPreparing extension bundles\n'
+stage_extensions
 
 cat <<'EOF'
 
@@ -174,7 +249,7 @@ ssh "${ssh_options[@]}" "$remote" "mkdir -p '$remote_extension_root'"
 
 for index in "${!extension_uuids[@]}"; do
   extension_uuid="${extension_uuids[$index]}"
-  extension_dir="${extension_dirs[$index]}"
+  extension_dir="${staged_extension_dirs[$index]}"
 
   printf 'Copying %s\n' "$extension_uuid"
   ssh "${ssh_options[@]}" "$remote" "rm -rf '$remote_extension_root/$extension_uuid'"

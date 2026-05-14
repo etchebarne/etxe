@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "التطبيق"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "إلغاء تثبيت \"%s\"؟"
+
+msgid "This will remove the app from this computer."
+msgstr "سيؤدي هذا إلى إزالة التطبيق من هذا الحاسوب."
+
+msgid "Your personal files will not be deleted."
+msgstr "لن تُحذف ملفاتك الشخصية."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "تعذّر إلغاء تثبيت \"%s\""
+
+msgid "OK"
+msgstr "حسنًا"
+
+msgid "This is a protected GNOME system application."
+msgstr "هذا تطبيق نظام GNOME محمي."
+
+msgid "Cannot uninstall application"
+msgstr "تعذّر إلغاء تثبيت التطبيق"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "تعذّر تحديد ما إذا كان هذا المشغّل ينتمي إلى حزمة Flatpak أو pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "الحزمة %s محمية لأن إزالتها قد تعطل سطح المكتب أو مدير الحزم."
+
+msgid "Required uninstall tool is not installed."
+msgstr "أداة إلغاء التثبيت المطلوبة غير مثبتة."
+
+msgid "Uninstalling application"
+msgstr "جارٍ إلغاء تثبيت التطبيق"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "جارٍ إزالة %s..."
+
+msgid "Application uninstalled"
+msgstr "أُلغي تثبيت التطبيق"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "تمت إزالة %s بنجاح."
+
+msgid "The uninstall command failed."
+msgstr "فشل أمر إلغاء التثبيت."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "فشل إلغاء تثبيت %s"
+
+msgid "protected"
+msgstr "محمي"

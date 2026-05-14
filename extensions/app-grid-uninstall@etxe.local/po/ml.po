@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Malayalam\n"
+"Language: ml\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "അപ്ലിക്കേഷൻ"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "\"%s\" അൺഇൻസ്റ്റാൾ ചെയ്യണോ?"
+
+msgid "This will remove the app from this computer."
+msgstr "ഇത് ഈ കമ്പ്യൂട്ടറിൽ നിന്ന് ആപ്പ് നീക്കം ചെയ്യും."
+
+msgid "Your personal files will not be deleted."
+msgstr "നിങ്ങളുടെ സ്വകാര്യ ഫയലുകൾ ഇല്ലാതാക്കുകയില്ല."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "\"%s\" അൺഇൻസ്റ്റാൾ ചെയ്യാൻ കഴിയില്ല"
+
+msgid "OK"
+msgstr "ശരി"
+
+msgid "This is a protected GNOME system application."
+msgstr "ഇത് സംരക്ഷിത GNOME സിസ്റ്റം അപ്ലിക്കേഷനാണ്."
+
+msgid "Cannot uninstall application"
+msgstr "അപ്ലിക്കേഷൻ അൺഇൻസ്റ്റാൾ ചെയ്യാൻ കഴിയില്ല"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "ഈ ലോഞ്ചർ Flatpak അല്ലെങ്കിൽ pacman പാക്കേജിലേതാണോ എന്ന് നിർണ്ണയിക്കാൻ കഴിഞ്ഞില്ല."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "പാക്കേജ് %s സംരക്ഷിതമാണ്, കാരണം അത് നീക്കം ചെയ്യുന്നത് ഡെസ്ക്ടോപ്പിനെയോ പാക്കേജ് മാനേജറെയോ തകരാറിലാക്കാം."
+
+msgid "Required uninstall tool is not installed."
+msgstr "ആവശ്യമായ അൺഇൻസ്റ്റാൾ ഉപകരണം ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല."
+
+msgid "Uninstalling application"
+msgstr "അപ്ലിക്കേഷൻ അൺഇൻസ്റ്റാൾ ചെയ്യുന്നു"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "%s നീക്കം ചെയ്യുന്നു..."
+
+msgid "Application uninstalled"
+msgstr "അപ്ലിക്കേഷൻ അൺഇൻസ്റ്റാൾ ചെയ്തു"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s വിജയകരമായി നീക്കം ചെയ്തു."
+
+msgid "The uninstall command failed."
+msgstr "അൺഇൻസ്റ്റാൾ കമാൻഡ് പരാജയപ്പെട്ടു."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "%s അൺഇൻസ്റ്റാൾ ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു"
+
+msgid "protected"
+msgstr "സംരക്ഷിതം"

@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "应用程序"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "卸载“%s”？"
+
+msgid "This will remove the app from this computer."
+msgstr "这将从此计算机移除该应用。"
+
+msgid "Your personal files will not be deleted."
+msgstr "不会删除您的个人文件。"
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "无法卸载“%s”"
+
+msgid "OK"
+msgstr "确定"
+
+msgid "This is a protected GNOME system application."
+msgstr "这是受保护的 GNOME 系统应用程序。"
+
+msgid "Cannot uninstall application"
+msgstr "无法卸载应用程序"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "无法确定此启动器属于 Flatpak 还是 pacman 软件包。"
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "软件包 %s 受保护，因为移除它可能会破坏桌面或软件包管理器。"
+
+msgid "Required uninstall tool is not installed."
+msgstr "未安装所需的卸载工具。"
+
+msgid "Uninstalling application"
+msgstr "正在卸载应用程序"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "正在移除 %s..."
+
+msgid "Application uninstalled"
+msgstr "应用程序已卸载"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s 已成功移除。"
+
+msgid "The uninstall command failed."
+msgstr "卸载命令失败。"
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "卸载 %s 失败"
+
+msgid "protected"
+msgstr "受保护"

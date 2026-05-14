@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Polish\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Aplikacja"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "Odinstalować „%s”?"
+
+msgid "This will remove the app from this computer."
+msgstr "Spowoduje to usunięcie aplikacji z tego komputera."
+
+msgid "Your personal files will not be deleted."
+msgstr "Twoje pliki osobiste nie zostaną usunięte."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "Nie można odinstalować „%s”"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "This is a protected GNOME system application."
+msgstr "To jest chroniona aplikacja systemowa GNOME."
+
+msgid "Cannot uninstall application"
+msgstr "Nie można odinstalować aplikacji"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "Nie można ustalić, czy ten aktywator należy do pakietu Flatpak lub pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "Pakiet %s jest chroniony, ponieważ jego usunięcie może uszkodzić środowisko graficzne lub menedżera pakietów."
+
+msgid "Required uninstall tool is not installed."
+msgstr "Wymagane narzędzie do odinstalowania nie jest zainstalowane."
+
+msgid "Uninstalling application"
+msgstr "Odinstalowywanie aplikacji"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "Usuwanie %s..."
+
+msgid "Application uninstalled"
+msgstr "Aplikacja odinstalowana"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s został pomyślnie usunięty."
+
+msgid "The uninstall command failed."
+msgstr "Polecenie odinstalowania nie powiodło się."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "Nie udało się odinstalować %s"
+
+msgid "protected"
+msgstr "chronione"

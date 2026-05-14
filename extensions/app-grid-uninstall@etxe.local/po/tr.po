@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Uygulama"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "\"%s\" kaldırılsın mı?"
+
+msgid "This will remove the app from this computer."
+msgstr "Bu, uygulamayı bu bilgisayardan kaldıracak."
+
+msgid "Your personal files will not be deleted."
+msgstr "Kişisel dosyalarınız silinmeyecek."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "\"%s\" kaldırılamıyor"
+
+msgid "OK"
+msgstr "Tamam"
+
+msgid "This is a protected GNOME system application."
+msgstr "Bu, korumalı bir GNOME sistem uygulamasıdır."
+
+msgid "Cannot uninstall application"
+msgstr "Uygulama kaldırılamıyor"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "Bu başlatıcının bir Flatpak veya pacman paketine ait olup olmadığı belirlenemedi."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "%s paketi korumalıdır çünkü kaldırılması masaüstünü veya paket yöneticisini bozabilir."
+
+msgid "Required uninstall tool is not installed."
+msgstr "Gerekli kaldırma aracı yüklü değil."
+
+msgid "Uninstalling application"
+msgstr "Uygulama kaldırılıyor"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "%s kaldırılıyor..."
+
+msgid "Application uninstalled"
+msgstr "Uygulama kaldırıldı"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s başarıyla kaldırıldı."
+
+msgid "The uninstall command failed."
+msgstr "Kaldırma komutu başarısız oldu."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "%s kaldırılamadı"
+
+msgid "protected"
+msgstr "korumalı"

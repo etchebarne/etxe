@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Приложение"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "Удалить \"%s\"?"
+
+msgid "This will remove the app from this computer."
+msgstr "Это удалит приложение с этого компьютера."
+
+msgid "Your personal files will not be deleted."
+msgstr "Ваши личные файлы не будут удалены."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "Не удалось удалить \"%s\""
+
+msgid "OK"
+msgstr "OK"
+
+msgid "This is a protected GNOME system application."
+msgstr "Это защищённое системное приложение GNOME."
+
+msgid "Cannot uninstall application"
+msgstr "Не удалось удалить приложение"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "Не удалось определить, принадлежит ли этот ярлык пакету Flatpak или pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "Пакет %s защищён, потому что его удаление может нарушить работу рабочего стола или менеджера пакетов."
+
+msgid "Required uninstall tool is not installed."
+msgstr "Необходимый инструмент удаления не установлен."
+
+msgid "Uninstalling application"
+msgstr "Удаление приложения"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "Удаление %s..."
+
+msgid "Application uninstalled"
+msgstr "Приложение удалено"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s успешно удалён."
+
+msgid "The uninstall command failed."
+msgstr "Команда удаления завершилась с ошибкой."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "Не удалось удалить %s"
+
+msgid "protected"
+msgstr "защищено"

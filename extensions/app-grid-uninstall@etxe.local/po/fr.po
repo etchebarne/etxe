@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Application"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "Désinstaller \"%s\" ?"
+
+msgid "This will remove the app from this computer."
+msgstr "Cela supprimera l'application de cet ordinateur."
+
+msgid "Your personal files will not be deleted."
+msgstr "Vos fichiers personnels ne seront pas supprimés."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "Impossible de désinstaller \"%s\""
+
+msgid "OK"
+msgstr "OK"
+
+msgid "This is a protected GNOME system application."
+msgstr "Il s'agit d'une application système GNOME protégée."
+
+msgid "Cannot uninstall application"
+msgstr "Impossible de désinstaller l'application"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "Impossible de déterminer si ce lanceur appartient à un paquet Flatpak ou pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "Le paquet %s est protégé, car sa suppression peut casser le bureau ou le gestionnaire de paquets."
+
+msgid "Required uninstall tool is not installed."
+msgstr "L'outil de désinstallation requis n'est pas installé."
+
+msgid "Uninstalling application"
+msgstr "Désinstallation de l'application"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "Suppression de %s..."
+
+msgid "Application uninstalled"
+msgstr "Application désinstallée"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s a été supprimé avec succès."
+
+msgid "The uninstall command failed."
+msgstr "La commande de désinstallation a échoué."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "Échec de la désinstallation de %s"
+
+msgid "protected"
+msgstr "protégé"

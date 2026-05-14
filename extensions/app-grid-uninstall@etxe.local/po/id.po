@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Indonesian\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Aplikasi"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "Uninstal \"%s\"?"
+
+msgid "This will remove the app from this computer."
+msgstr "Ini akan menghapus aplikasi dari komputer ini."
+
+msgid "Your personal files will not be deleted."
+msgstr "Berkas pribadi Anda tidak akan dihapus."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "Tidak dapat menghapus instalasi \"%s\""
+
+msgid "OK"
+msgstr "OK"
+
+msgid "This is a protected GNOME system application."
+msgstr "Ini adalah aplikasi sistem GNOME yang dilindungi."
+
+msgid "Cannot uninstall application"
+msgstr "Tidak dapat menghapus instalasi aplikasi"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "Tidak dapat menentukan apakah peluncur ini milik paket Flatpak atau pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "Paket %s dilindungi karena menghapusnya dapat merusak desktop atau pengelola paket."
+
+msgid "Required uninstall tool is not installed."
+msgstr "Alat penghapus instalasi yang diperlukan tidak terpasang."
+
+msgid "Uninstalling application"
+msgstr "Menghapus instalasi aplikasi"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "Menghapus %s..."
+
+msgid "Application uninstalled"
+msgstr "Aplikasi telah dihapus"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s berhasil dihapus."
+
+msgid "The uninstall command failed."
+msgstr "Perintah penghapusan instalasi gagal."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "Gagal menghapus instalasi %s"
+
+msgid "protected"
+msgstr "dilindungi"

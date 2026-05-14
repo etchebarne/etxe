@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Telugu\n"
+"Language: te\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "అనువర్తనం"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "\"%s\" ను అన్‌ఇన్‌స్టాల్ చేయాలా?"
+
+msgid "This will remove the app from this computer."
+msgstr "ఇది ఈ కంప్యూటర్ నుండి యాప్‌ను తీసివేస్తుంది."
+
+msgid "Your personal files will not be deleted."
+msgstr "మీ వ్యక్తిగత ఫైళ్లు తొలగించబడవు."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "\"%s\" ను అన్‌ఇన్‌స్టాల్ చేయలేము"
+
+msgid "OK"
+msgstr "సరే"
+
+msgid "This is a protected GNOME system application."
+msgstr "ఇది రక్షిత GNOME వ్యవస్థ అనువర్తనం."
+
+msgid "Cannot uninstall application"
+msgstr "అనువర్తనాన్ని అన్‌ఇన్‌స్టాల్ చేయలేము"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "ఈ లాంచర్ Flatpak లేదా pacman ప్యాకేజీకి చెందినదో లేదో గుర్తించలేకపోయాం."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "ప్యాకేజీ %s రక్షించబడింది, ఎందుకంటే దాన్ని తీసివేయడం డెస్క్‌టాప్ లేదా ప్యాకేజీ నిర్వాహకాన్ని దెబ్బతీయవచ్చు."
+
+msgid "Required uninstall tool is not installed."
+msgstr "అవసరమైన అన్‌ఇన్‌స్టాల్ సాధనం ఇన్‌స్టాల్ చేయబడలేదు."
+
+msgid "Uninstalling application"
+msgstr "అనువర్తనం అన్‌ఇన్‌స్టాల్ అవుతోంది"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "%s తీసివేస్తోంది..."
+
+msgid "Application uninstalled"
+msgstr "అనువర్తనం అన్‌ఇన్‌స్టాల్ అయింది"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s విజయవంతంగా తీసివేయబడింది."
+
+msgid "The uninstall command failed."
+msgstr "అన్‌ఇన్‌స్టాల్ ఆదేశం విఫలమైంది."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "%s ను అన్‌ఇన్‌స్టాల్ చేయడంలో విఫలమైంది"
+
+msgid "protected"
+msgstr "రక్షితం"

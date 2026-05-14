@@ -2,6 +2,7 @@ import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import St from 'gi://St';
+import Gettext from 'gettext';
 
 import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as AppDisplay from 'resource:///org/gnome/shell/ui/appDisplay.js';
@@ -10,6 +11,7 @@ import * as ModalDialog from 'resource:///org/gnome/shell/ui/modalDialog.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 const MENU_METHOD_CANDIDATES = ['popupMenu', '_buildMenu', '_createMenu'];
+const EXTENSION_GETTEXT_DOMAIN = 'app-grid-uninstall';
 const GNOME_SHELL_GETTEXT_DOMAIN = 'gnome-shell';
 const GNOME_SOFTWARE_GETTEXT_DOMAIN = 'gnome-software';
 
@@ -45,7 +47,7 @@ const PROTECTED_PACKAGES = new Set([
 ]);
 
 function getAppName(app) {
-  return app?.get_name?.() ?? 'Application';
+  return app?.get_name?.() ?? _('Application');
 }
 
 function getAppId(app) {
@@ -104,6 +106,19 @@ function notify(title, body = '') {
 
 function gettextFrom(domain, text) {
   return GLib.dgettext(domain, text);
+}
+
+function bindExtensionTranslations(extension) {
+  Gettext.bindtextdomain(EXTENSION_GETTEXT_DOMAIN, `${extension.path}/locale`);
+}
+
+function _(text) {
+  return gettextFrom(EXTENSION_GETTEXT_DOMAIN, text);
+}
+
+function formatMessage(text, ...args) {
+  let index = 0;
+  return text.replace(/%s/g, () => String(args[index++] ?? ''));
 }
 
 function cancelLabel() {
@@ -263,7 +278,7 @@ class UninstallDialog {
     });
 
     const headline = new St.Label({
-      text: `Uninstall "${appName}"?`,
+      text: formatMessage(_("Uninstall \"%s\"?"), appName),
       style_class: 'prompt-dialog-headline',
     });
     lineWrap(headline);
@@ -299,8 +314,8 @@ class UninstallDialog {
   }
 
   _buildBodyText() {
-    let body = 'This will remove the app from this computer.';
-    body += ' Your personal files will not be deleted.';
+    let body = _('This will remove the app from this computer.');
+    body += ` ${_('Your personal files will not be deleted.')}`;
 
     return body;
   }
@@ -316,7 +331,7 @@ class BlockedDialog {
     const dialog = new ModalDialog.ModalDialog({styleClass: 'prompt-dialog'});
 
     const headline = new St.Label({
-      text: `Cannot uninstall "${getAppName(this._app)}"`,
+      text: formatMessage(_("Cannot uninstall \"%s\""), getAppName(this._app)),
       style_class: 'prompt-dialog-headline',
     });
     lineWrap(headline);
@@ -330,7 +345,7 @@ class BlockedDialog {
     dialog.contentLayout.add_child(body);
 
     dialog.addButton({
-      label: 'OK',
+      label: _('OK'),
       action: () => dialog.close(),
       key: Clutter.KEY_Return,
       default: true,
@@ -346,7 +361,7 @@ class UninstallManager {
       return;
 
     if (isProtectedApp(app)) {
-      new BlockedDialog(app, 'This is a protected GNOME system application.').open();
+      new BlockedDialog(app, _('This is a protected GNOME system application.')).open();
       return;
     }
 
@@ -355,8 +370,8 @@ class UninstallManager {
 
     if (pkg.type === PackageType.UNKNOWN) {
       notify(
-        'Cannot uninstall application',
-        'Could not determine whether this launcher belongs to a Flatpak or pacman package.'
+        _('Cannot uninstall application'),
+        _('Could not determine whether this launcher belongs to a Flatpak or pacman package.')
       );
       return;
     }
@@ -364,7 +379,10 @@ class UninstallManager {
     if (isProtectedPackage(pkg)) {
       new BlockedDialog(
         app,
-        `Package ${pkg.identifier} is protected because removing it can break the desktop or package manager.`
+        formatMessage(
+          _('Package %s is protected because removing it can break the desktop or package manager.'),
+          pkg.identifier
+        )
       ).open();
       return;
     }
@@ -380,20 +398,20 @@ class UninstallManager {
     const command = this._buildUninstallCommand(pkg);
 
     if (!command) {
-      notify('Cannot uninstall application', 'Required uninstall tool is not installed.');
+      notify(_('Cannot uninstall application'), _('Required uninstall tool is not installed.'));
       return;
     }
 
-    notify('Uninstalling application', `Removing ${appName}...`);
+    notify(_('Uninstalling application'), formatMessage(_('Removing %s...'), appName));
 
     const result = await runCommand(command, {LC_ALL: 'C'});
     if (result.ok && result.status === 0) {
-      notify('Application uninstalled', `${appName} was removed successfully.`);
+      notify(_('Application uninstalled'), formatMessage(_('%s was removed successfully.'), appName));
       return;
     }
 
-    const details = result.stderr || result.stdout || 'The uninstall command failed.';
-    notify(`Failed to uninstall ${appName}`, details);
+    const details = result.stderr || result.stdout || _('The uninstall command failed.');
+    notify(formatMessage(_('Failed to uninstall %s'), appName), details);
   }
 
   _buildUninstallCommand(pkg) {
@@ -495,13 +513,13 @@ class AppGridMenuPatcher {
     const item = new PopupMenu.PopupMenuItem(`${uninstallLabel()}...`);
     const activateId = item.connect('activate', () => {
       this._manager.start(app).catch(error => {
-        notify('Cannot uninstall application', error.message);
+        notify(_('Cannot uninstall application'), error.message);
       });
     });
 
     if (isProtectedApp(app)) {
       item.setSensitive(false);
-      item.label.set_text(`${uninstallLabel()} (protected)`);
+      item.label.set_text(`${uninstallLabel()} (${_('protected')})`);
     }
 
     menu.addMenuItem(separator);
@@ -514,6 +532,7 @@ class AppGridMenuPatcher {
 
 export default class AppGridUninstallExtension extends Extension {
   enable() {
+    bindExtensionTranslations(this);
     this._patcher = new AppGridMenuPatcher();
     this._patcher.enable();
   }

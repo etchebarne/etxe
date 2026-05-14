@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app-grid-uninstall\n"
+"PO-Revision-Date: 2026-05-13 00:00+0000\n"
+"Last-Translator: Etxe maintainers\n"
+"Language-Team: Italian\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Application"
+msgstr "Applicazione"
+
+#, javascript-format
+msgid "Uninstall \"%s\"?"
+msgstr "Disinstallare \"%s\"?"
+
+msgid "This will remove the app from this computer."
+msgstr "L'app verrà rimossa da questo computer."
+
+msgid "Your personal files will not be deleted."
+msgstr "I file personali non verranno eliminati."
+
+#, javascript-format
+msgid "Cannot uninstall \"%s\""
+msgstr "Impossibile disinstallare \"%s\""
+
+msgid "OK"
+msgstr "OK"
+
+msgid "This is a protected GNOME system application."
+msgstr "Questa è un'applicazione di sistema GNOME protetta."
+
+msgid "Cannot uninstall application"
+msgstr "Impossibile disinstallare l'applicazione"
+
+msgid "Could not determine whether this launcher belongs to a Flatpak or pacman package."
+msgstr "Impossibile determinare se questo lanciatore appartiene a un pacchetto Flatpak o pacman."
+
+#, javascript-format
+msgid "Package %s is protected because removing it can break the desktop or package manager."
+msgstr "Il pacchetto %s è protetto perché la sua rimozione può compromettere l'ambiente desktop o il gestore dei pacchetti."
+
+msgid "Required uninstall tool is not installed."
+msgstr "Lo strumento di disinstallazione richiesto non è installato."
+
+msgid "Uninstalling application"
+msgstr "Disinstallazione dell'applicazione"
+
+#, javascript-format
+msgid "Removing %s..."
+msgstr "Rimozione di %s..."
+
+msgid "Application uninstalled"
+msgstr "Applicazione disinstallata"
+
+#, javascript-format
+msgid "%s was removed successfully."
+msgstr "%s è stato rimosso correttamente."
+
+msgid "The uninstall command failed."
+msgstr "Il comando di disinstallazione non è riuscito."
+
+#, javascript-format
+msgid "Failed to uninstall %s"
+msgstr "Impossibile disinstallare %s"
+
+msgid "protected"
+msgstr "protetto"

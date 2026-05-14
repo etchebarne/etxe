@@ -19,6 +19,11 @@ uuid="app-grid-uninstall@etxe.local"
 dest="$HOME/.local/share/gnome-shell/extensions/$uuid"
 mkdir -p "$dest"
 cp -r "extensions/$uuid"/* "$dest/"
+while IFS= read -r lang; do
+  [ -n "$lang" ] || continue
+  mkdir -p "$dest/locale/$lang/LC_MESSAGES"
+  msgfmt -c -o "$dest/locale/$lang/LC_MESSAGES/app-grid-uninstall.mo" "$dest/po/$lang.po"
+done < "$dest/po/LINGUAS"
 gnome-extensions enable "$uuid"
 ```
 

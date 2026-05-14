@@ -227,6 +227,7 @@ cat "$REPO_PATH/packages/iso.pkglist" >>"$PROFILE_PATH/packages.x86_64"
 sort -u "$PROFILE_PATH/packages.x86_64" -o "$PROFILE_PATH/packages.x86_64"
 
 chmod +x "$TARGET_REPO_PATH/install.sh"
+chmod +x "$TARGET_REPO_PATH/update.sh"
 chmod +x "$PROFILE_PATH/airootfs/usr/local/bin/etxe-install-auto"
 chmod +x "$PROFILE_PATH/airootfs/usr/local/bin/etxe-installer-gui"
 chmod +x "$PROFILE_PATH/airootfs/usr/local/bin/etxe-installer-session"

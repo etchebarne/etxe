@@ -58,6 +58,14 @@ This skips bundling the offline install repository. The GUI still works, but cli
 
 For VM testing, boot the ISO in UEFI mode with a blank virtual disk of at least 15 GiB.
 
+After installing into a VM, update it from the host with:
+
+```sh
+./iso/update-vm.sh martin@127.0.0.1 2222
+```
+
+Use the VM username and SSH endpoint. For `./iso/create-vm.sh --3d` VMs, the endpoint is normally `127.0.0.1` port `2222`. SSH must be enabled in the VM first with `sudo pacman -S --needed openssh && sudo systemctl enable --now sshd`.
+
 If the service fails, inspect the live ISO logs with:
 
 ```sh

@@ -10,14 +10,18 @@ etxe_log() {
 }
 
 etxe_start_log() {
-  local log_dir
+  local log_dir log_file
   [[ "${ETXE_LOG_STARTED:-}" == "YES" ]] && return 0
 
-  log_dir="$(dirname -- "$ETXE_INSTALL_LOG_FILE")"
+  log_file="${ETXE_LOG_FILE:-${ETXE_INSTALL_LOG_FILE:-}}"
+  [[ -n "$log_file" ]] || etxe_die "ETXE_LOG_FILE is required"
+  export ETXE_LOG_FILE="$log_file"
+
+  log_dir="$(dirname -- "$log_file")"
 
   install -d -m 0755 "$log_dir"
-  touch "$ETXE_INSTALL_LOG_FILE"
-  chmod 0644 "$ETXE_INSTALL_LOG_FILE"
+  touch "$log_file"
+  chmod 0644 "$log_file"
   export ETXE_LOG_STARTED=YES
-  exec > >(tee -a "$ETXE_INSTALL_LOG_FILE") 2>&1
+  exec > >(tee -a "$log_file") 2>&1
 }

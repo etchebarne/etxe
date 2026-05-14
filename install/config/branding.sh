@@ -5,10 +5,6 @@ etxe_configure_branding() {
 
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon.svg" \
     "$ETXE_MOUNT/usr/share/icons/hicolor/scalable/apps/etxe-icon.svg"
-  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
-    "$ETXE_MOUNT/usr/share/icons/hicolor/scalable/apps/etxe-icon-symbolic.svg"
-  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
-    "$ETXE_MOUNT/usr/share/icons/hicolor/symbolic/apps/etxe-icon-symbolic.svg"
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
     "$ETXE_MOUNT/usr/share/icons/hicolor/scalable/apps/etxe-logo.svg"
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \

@@ -272,10 +272,6 @@ etxe_update_branding() {
 
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon.svg" \
     /usr/share/icons/hicolor/scalable/apps/etxe-icon.svg
-  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
-    /usr/share/icons/hicolor/scalable/apps/etxe-icon-symbolic.svg
-  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
-    /usr/share/icons/hicolor/symbolic/apps/etxe-icon-symbolic.svg
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
     /usr/share/icons/hicolor/scalable/apps/etxe-logo.svg
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
@@ -284,6 +280,9 @@ etxe_update_branding() {
     /usr/share/icons/hicolor/symbolic/apps/etxe-logo-symbolic.svg
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
     /usr/share/pixmaps/etxe-logo.svg
+  rm -f \
+    /usr/share/icons/hicolor/scalable/apps/etxe-icon-symbolic.svg \
+    /usr/share/icons/hicolor/symbolic/apps/etxe-icon-symbolic.svg
 
   if command -v gtk-update-icon-cache >/dev/null; then
     gtk-update-icon-cache -q -f /usr/share/icons/hicolor \

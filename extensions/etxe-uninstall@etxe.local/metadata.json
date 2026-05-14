@@ -1,6 +1,6 @@
 {
-  "uuid": "app-grid-uninstall@etxe.local",
-  "name": "App Grid Uninstall",
+  "uuid": "etxe-uninstall@etxe.local",
+  "name": "Etxe Uninstall",
   "description": "Adds an Uninstall action to app-grid context menus for Flatpak and Arch pacman/AUR apps.",
   "gettext-domain": "app-grid-uninstall",
   "version": 1,

@@ -1,4 +1,4 @@
-# App Grid Uninstall
+# Etxe Uninstall
 
 Adds an `Uninstall...` action to GNOME app-grid right-click menus.
 
@@ -15,7 +15,7 @@ Pacman removals use `pkexec pacman -Rns --noconfirm <package>` after the GNOME c
 ## Install For Development
 
 ```sh
-uuid="app-grid-uninstall@etxe.local"
+uuid="etxe-uninstall@etxe.local"
 dest="$HOME/.local/share/gnome-shell/extensions/$uuid"
 mkdir -p "$dest"
 cp -r "extensions/$uuid"/* "$dest/"

@@ -1,12 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the App Grid Uninstall package.
+# This file is distributed under the same license as the Etxe Uninstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: App Grid Uninstall\n"
+"Project-Id-Version: Etxe Uninstall\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-05-13 20:50-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -17,86 +17,86 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:50
+#: extensions/etxe-uninstall@etxe.local/extension.js:50
 msgid "Application"
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:281
+#: extensions/etxe-uninstall@etxe.local/extension.js:281
 #, javascript-format
 msgid "Uninstall \"%s\"?"
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:317
+#: extensions/etxe-uninstall@etxe.local/extension.js:317
 msgid "This will remove the app from this computer."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:318
+#: extensions/etxe-uninstall@etxe.local/extension.js:318
 msgid "Your personal files will not be deleted."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:334
+#: extensions/etxe-uninstall@etxe.local/extension.js:334
 #, javascript-format
 msgid "Cannot uninstall \"%s\""
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:348
+#: extensions/etxe-uninstall@etxe.local/extension.js:348
 msgid "OK"
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:364
+#: extensions/etxe-uninstall@etxe.local/extension.js:364
 msgid "This is a protected GNOME system application."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:373
-#: extensions/app-grid-uninstall@etxe.local/extension.js:401
-#: extensions/app-grid-uninstall@etxe.local/extension.js:516
+#: extensions/etxe-uninstall@etxe.local/extension.js:373
+#: extensions/etxe-uninstall@etxe.local/extension.js:401
+#: extensions/etxe-uninstall@etxe.local/extension.js:516
 msgid "Cannot uninstall application"
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:374
+#: extensions/etxe-uninstall@etxe.local/extension.js:374
 msgid ""
 "Could not determine whether this launcher belongs to a Flatpak or pacman "
 "package."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:383
+#: extensions/etxe-uninstall@etxe.local/extension.js:383
 #, javascript-format
 msgid ""
 "Package %s is protected because removing it can break the desktop or package "
 "manager."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:401
+#: extensions/etxe-uninstall@etxe.local/extension.js:401
 msgid "Required uninstall tool is not installed."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:405
+#: extensions/etxe-uninstall@etxe.local/extension.js:405
 msgid "Uninstalling application"
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:405
+#: extensions/etxe-uninstall@etxe.local/extension.js:405
 #, javascript-format
 msgid "Removing %s..."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:409
+#: extensions/etxe-uninstall@etxe.local/extension.js:409
 msgid "Application uninstalled"
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:409
+#: extensions/etxe-uninstall@etxe.local/extension.js:409
 #, javascript-format
 msgid "%s was removed successfully."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:413
+#: extensions/etxe-uninstall@etxe.local/extension.js:413
 msgid "The uninstall command failed."
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:414
+#: extensions/etxe-uninstall@etxe.local/extension.js:414
 #, javascript-format
 msgid "Failed to uninstall %s"
 msgstr ""
 
-#: extensions/app-grid-uninstall@etxe.local/extension.js:522
+#: extensions/etxe-uninstall@etxe.local/extension.js:522
 msgid "protected"
 msgstr ""

@@ -37,7 +37,6 @@ const NotifyX11UnderWayland = imports.notifyX11UnderWayland;
 const DBusUtils = imports.dbusUtils;
 const AskRenamePopup = imports.askRenamePopup;
 const ShowErrorPopup = imports.showErrorPopup;
-const TemplatesScriptsManager = imports.templatesScriptsManager;
 const Thumbnails = imports.thumbnails;
 const FileItemMenu = imports.fileItemMenu;
 const AutoAr = imports.autoAr;
@@ -76,6 +75,8 @@ var DesktopManager = class {
         }
         this._selectedFiles = null;
         this._popupCounter = 0;
+        this.newFolderDoRename = null;
+        this._pendingNewItemRenameText = null;
 
         this._premultiplied = false;
         try {
@@ -91,12 +92,6 @@ var DesktopManager = class {
         this.dbusManager = dbusManager;
         this.autoAr = new AutoAr.AutoAr(this);
 
-        this.templatesMonitor = new TemplatesScriptsManager.TemplatesScriptsManager(
-            DesktopIconsUtil.getTemplatesDir(),
-            TemplatesScriptsManager.TemplatesScriptsManagerFlags.HIDE_EXTENSIONS,
-            this._newDocument.bind(this)
-        );
-
         this._primaryIndex = primaryIndex;
         if (primaryIndex < desktopList.length) {
             this._primaryScreen = desktopList[primaryIndex];
@@ -105,6 +100,9 @@ var DesktopManager = class {
         }
         this._clickX = 0;
         this._clickY = 0;
+        this._canPaste = false;
+        this._canUndo = false;
+        this._canRedo = false;
         this._dragList = null;
         this.dragItem = null;
         this.thumbnailLoader = new Thumbnails.ThumbnailLoader(this, codePath);
@@ -240,7 +238,6 @@ var DesktopManager = class {
         Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), cssProvider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
         cssProvider = undefined;
         this._configureSelectionColor();
-        this._createDesktopBackgroundMenu();
         this._createGridWindows();
 
         DBusUtils.NautilusFileOperations2.connectToProxy('g-properties-changed', this._undoStatusChanged.bind(this));
@@ -747,9 +744,7 @@ var DesktopManager = class {
         }
         if (button == 3) {
             this._prepareMenu();
-            if (!this._showNativeDesktopMenu(x, y)) {
-                this._menu.popup_at_pointer(event);
-            }
+            this._showNativeDesktopMenu(x, y);
         }
     }
 
@@ -758,12 +753,12 @@ var DesktopManager = class {
             this._nativeMenuItem(_('New Folder'), 'desktop-new-folder'),
             this._nativeMenuItem(_('New Document'), 'desktop-new-text-file'),
             this._nativeMenuSeparator(),
-            this._nativeMenuItem(_('Paste'), 'desktop-paste', this._pasteMenuItem.get_sensitive()),
-            ...(this._undoMenuItem.get_visible() ? [this._nativeMenuItem(_('Undo'), 'desktop-undo')] : []),
-            ...(this._redoMenuItem.get_visible() ? [this._nativeMenuItem(_('Redo'), 'desktop-redo')] : []),
+            this._nativeMenuItem(_('Paste'), 'desktop-paste', this._canPaste),
+            ...(this._canUndo ? [this._nativeMenuItem(_('Undo'), 'desktop-undo')] : []),
+            ...(this._canRedo ? [this._nativeMenuItem(_('Redo'), 'desktop-redo')] : []),
             this._nativeMenuSeparator(),
             this._nativeMenuItem(_('Select All'), 'desktop-select-all'),
-            this._nativeMenuItem(_('Arrange Icons'), 'desktop-arrange-icons', this._cleanUpMenuItem.get_sensitive() && this._cleanUpMenuItem.get_visible()),
+            this._nativeMenuItem(_('Arrange Icons'), 'desktop-arrange-icons', !this.keepArranged && !this.stackInitialCoordinates),
             this._nativeMenuSeparator(),
             this._nativeMenuItem(_('Show Desktop in Files'), 'desktop-show-in-files'),
             this._nativeMenuItem(_('Open in Terminal'), 'desktop-open-terminal'),
@@ -808,14 +803,7 @@ var DesktopManager = class {
     }
 
     _prepareMenu() {
-        let templates = this.templatesMonitor.createMenu();
-        if (templates === null) {
-            this._newDocumentItem.hide();
-        } else {
-            this._newDocumentItem.set_submenu(templates);
-            this._newDocumentItem.show_all();
-        }
-        this._pasteMenuItem.set_sensitive(false);
+        this._canPaste = false;
         this._syncUndoRedo();
         this._updateClipBoard();
     }
@@ -863,27 +851,22 @@ var DesktopManager = class {
             this._isCut = isCut;
             this._clipboardFiles = files;
         }
-        this._pasteMenuItem.set_sensitive(valid);
+        this._canPaste = valid;
     }
 
     _syncUndoRedo() {
+        this._canUndo = false;
+        this._canRedo = false;
+
         if (!DBusUtils.RemoteFileOperations.isAvailable) {
-            this._undoMenuItem.hide();
-            this._redoMenuItem.hide();
             return;
         }
         switch (DBusUtils.RemoteFileOperations.UndoStatus()) {
         case Enums.UndoStatus.UNDO:
-            this._undoMenuItem.show();
-            this._redoMenuItem.hide();
+            this._canUndo = true;
             break;
         case Enums.UndoStatus.REDO:
-            this._undoMenuItem.hide();
-            this._redoMenuItem.show();
-            break;
-        default:
-            this._undoMenuItem.hide();
-            this._redoMenuItem.hide();
+            this._canRedo = true;
             break;
         }
     }
@@ -1139,7 +1122,7 @@ var DesktopManager = class {
                 this.fileItemMenu.showMenu(selection[0], event, true);
             } else {
                 this._prepareMenu();
-                this._menu.popup_at_pointer(event);
+                this._showNativeDesktopMenu(this._clickX, this._clickY);
             }
             return true;
         } else if (isCtrl && (symbol == Gdk.KEY_plus)) {
@@ -1149,6 +1132,9 @@ var DesktopManager = class {
             Prefs.decrease_icon_size();
             return true;
         } else {
+            if (this._capturePendingNewItemRenameKey(symbol)) {
+                return true;
+            }
             if (this.ignoreKeys.includes(symbol)) {
                 return false;
             }
@@ -1217,6 +1203,39 @@ var DesktopManager = class {
             return false;
         });
     }
+
+    _clearSearchState() {
+        this.searchString = null;
+        if (this.keypressTimeoutID) {
+            GLib.source_remove(this.keypressTimeoutID);
+            this.keypressTimeoutID = null;
+        }
+        if (this._findFileWindow) {
+            this._findFileWindow.response(Gtk.ResponseType.OK);
+        }
+    }
+
+    _queueNewItemRename(fileName) {
+        this.newFolderDoRename = fileName;
+        this._pendingNewItemRenameText = '';
+        this._clearSearchState();
+    }
+
+    _capturePendingNewItemRenameKey(symbol) {
+        if (!this.newFolderDoRename || this._renameWindow) {
+            return false;
+        }
+
+        const unicode = Gdk.keyval_to_unicode(symbol);
+        if (unicode != 0) {
+            const pendingText = this._pendingNewItemRenameText || '';
+            this._pendingNewItemRenameText = pendingText.concat(String.fromCharCode(unicode));
+        }
+
+        this._clearSearchState();
+        return true;
+    }
+
     findFiles(text) {
         this._findFileWindow = new Gtk.Dialog({
             use_header_bar: true,
@@ -1292,86 +1311,6 @@ var DesktopManager = class {
         }
     }
 
-    _createDesktopBackgroundMenu() {
-        this._menu = new Gtk.Menu();
-        this._menu.get_style_context().add_class('desktopmenu');
-        let newFolder = new Gtk.MenuItem({label: _('New Folder')});
-        newFolder.connect('activate', () => this.doNewFolder());
-        this._menu.add(newFolder);
-
-        this._newDocumentItem = new Gtk.MenuItem({label: _('New Document')});
-        this._menu.add(this._newDocumentItem);
-
-        this._menu.add(new Gtk.SeparatorMenuItem());
-
-        this._pasteMenuItem = new Gtk.MenuItem({label: _('Paste')});
-        this._pasteMenuItem.connect('activate', () => this._doPaste());
-        this._menu.add(this._pasteMenuItem);
-
-        this._undoMenuItem = new Gtk.MenuItem({label: _('Undo')});
-        this._undoMenuItem.connect('activate', () => this._doUndo());
-        this._menu.add(this._undoMenuItem);
-
-        this._redoMenuItem = new Gtk.MenuItem({label: _('Redo')});
-        this._redoMenuItem.connect('activate', () => this._doRedo());
-        this._menu.add(this._redoMenuItem);
-
-        this._menu.add(new Gtk.SeparatorMenuItem());
-
-        let selectAll = new Gtk.MenuItem({label: _('Select All')});
-        selectAll.connect('activate', () => this._selectAll());
-        this._menu.add(selectAll);
-
-        this._addSortingMenu();
-
-        this._menu.add(new Gtk.SeparatorMenuItem());
-
-        this._showDesktopInFilesMenuItem = new Gtk.MenuItem({label: _('Show Desktop in Files')});
-        this._showDesktopInFilesMenuItem.connect('activate', () => this._onOpenDesktopInFilesClicked());
-        this._menu.add(this._showDesktopInFilesMenuItem);
-
-        this._openTerminalMenuItem = new Gtk.MenuItem({label: _('Open in Terminal')});
-        this._openTerminalMenuItem.connect('activate', () => this._onOpenTerminalClicked());
-        this._menu.add(this._openTerminalMenuItem);
-
-        this._menu.add(new Gtk.SeparatorMenuItem());
-
-        this._changeBackgroundMenuItem = new Gtk.MenuItem({label: _('Change Background…')});
-        this._changeBackgroundMenuItem.connect('activate', () => {
-            const desktopFile = Gio.DesktopAppInfo.new('gnome-background-panel.desktop');
-            const context = Gdk.Display.get_default().get_app_launch_context();
-            context.set_timestamp(Gtk.get_current_event_time());
-            desktopFile.launch([], context);
-        });
-        this._menu.add(this._changeBackgroundMenuItem);
-
-        this._menu.add(new Gtk.SeparatorMenuItem());
-
-        this._settingsMenuItem = new Gtk.MenuItem({label: _('Desktop Icons Settings')});
-        if (GLib.getenv('XDG_CURRENT_DESKTOP').split(':').includes('ubuntu')) {
-            this._settingsMenuItem.connect("activate", () => {
-                const desktopFile = Gio.DesktopAppInfo.new('gnome-ubuntu-panel.desktop');
-                const context = Gdk.Display.get_default().get_app_launch_context();
-                context.set_timestamp(Gtk.get_current_event_time());
-                desktopFile.launch([], context);
-            });
-        } else {
-            this._settingsMenuItem.connect("activate", () => Prefs.showPreferences());
-        }
-        this._menu.add(this._settingsMenuItem);
-
-        this._displaySettingsMenuItem = new Gtk.MenuItem({label: _('Display Settings')});
-        this._displaySettingsMenuItem.connect('activate', () => {
-            const desktopFile = Gio.DesktopAppInfo.new('gnome-display-panel.desktop');
-            const context = Gdk.Display.get_default().get_app_launch_context();
-            context.set_timestamp(Gtk.get_current_event_time());
-            desktopFile.launch([], context);
-        });
-        this._menu.add(this._displaySettingsMenuItem);
-
-        this._menu.show_all();
-    }
-
     _selectAll() {
         for (let fileItem of this._fileList) {
             if (fileItem.isAllSelectable) {
@@ -1418,7 +1357,7 @@ var DesktopManager = class {
 
         const fileName = this.getDesktopUniqueFileName(_('New Text File.txt'));
         DesktopIconsUtil.writeTextFileToDesktop('', fileName, [this._clickX, this._clickY]);
-        this.newFolderDoRename = fileName;
+        this._queueNewItemRename(fileName);
     }
 
     _parseClipboardText(text) {
@@ -1982,8 +1921,9 @@ var DesktopManager = class {
             this._renameWindow = new AskRenamePopup.AskRenamePopup(this, fileItem, allowReturnOnSameName, () => {
                 this._renameWindow = null;
                 this.newFolderDoRename = null;
+                this._pendingNewItemRenameText = null;
                 this._renamingFile = null;
-            });
+            }, this._pendingNewItemRenameText);
         }
     }
 
@@ -2037,103 +1977,13 @@ var DesktopManager = class {
                 return null;
             }
             if (opts.rename) {
-                this.newFolderDoRename = newName;
+                this._queueNewItemRename(newName);
             }
             if (position || suggestedName) {
                 return dir.get_uri();
             }
         }
         return null;
-    }
-
-    _newDocument(template) {
-        const file = Gio.File.new_for_path(template);
-        if ((file == null) || !file.query_exists(null)) {
-            return;
-        }
-
-        const fullName = file.get_basename();
-        const finalName = this.getDesktopUniqueFileName(fullName);
-
-        let destination = Gio.File.new_for_path(GLib.build_filenamev([GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP), finalName]));
-
-        try {
-            file.copy(destination, Gio.FileCopyFlags.NONE, null, null);
-            const info = new Gio.FileInfo();
-            info.set_attribute_string('metadata::nautilus-drop-position', `${this._clickX},${this._clickY}`);
-            info.set_attribute_string('metadata::nautilus-icon-position', '');
-            destination.set_attributes_from_info(info, Gio.FileQueryInfoFlags.NONE, null);
-        } catch (e) {
-            console.error(e, `Failed to create template ${e.message}`);
-            const header = _('Template Creation Failed');
-            const text = _('Error while trying to create a Document');
-            this.dbusManager.doNotify(header, text);
-        }
-    }
-
-    _addSortingMenu() {
-        this._menu.add(new Gtk.SeparatorMenuItem());
-
-        this._cleanUpMenuItem = new Gtk.MenuItem({label: _('Arrange Icons')});
-        this._cleanUpMenuItem.connect('activate', () => this._sortAllFilesFromGridsByPosition());
-        this._menu.add(this._cleanUpMenuItem);
-
-        this._ArrangeByMenuItem = new Gtk.MenuItem({label: _('Arrange By...')});
-        this._menu.add(this._ArrangeByMenuItem);
-        this._addSortingSubMenu();
-    }
-
-    _addSortingSubMenu() {
-        this._arrangeSubMenu = new Gtk.Menu();
-        this._ArrangeByMenuItem.set_submenu(this._arrangeSubMenu);
-
-        this._keepArrangedMenuItem = new Gtk.CheckMenuItem({label: _('Keep Arranged...')});
-        Prefs.desktopSettings.bind('keep-arranged', this._keepArrangedMenuItem, 'active', 3);
-        this._arrangeSubMenu.add(this._keepArrangedMenuItem);
-
-        this._keepStackedMenuItem = new Gtk.CheckMenuItem({label: _('Keep Stacked by type...')});
-        Prefs.desktopSettings.bind('keep-stacked', this._keepStackedMenuItem, 'active', 3);
-        this._arrangeSubMenu.add(this._keepStackedMenuItem);
-        this._keepArrangedMenuItem.bind_property('active', this._cleanUpMenuItem, 'sensitive', 6);
-
-        this._sortSpecialFilesMenuItem = new Gtk.CheckMenuItem({label: _('Sort Home/Drives/Trash...')});
-        Prefs.desktopSettings.bind('sort-special-folders', this._sortSpecialFilesMenuItem, 'active', 3);
-        this._arrangeSubMenu.add(this._sortSpecialFilesMenuItem);
-
-        this._arrangeSubMenu.add(new Gtk.SeparatorMenuItem());
-
-        this._radioName = new Gtk.RadioMenuItem({label: _('Sort by Name')});
-        this._arrangeSubMenu.add(this._radioName);
-        this._radioDescName = new Gtk.RadioMenuItem({label: _('Sort by Name Descending')});
-        this._radioDescName.join_group(this._radioName);
-        this._arrangeSubMenu.add(this._radioDescName);
-        this._radioTimeName = new Gtk.RadioMenuItem({label: _('Sort by Modified Time')});
-        this._radioTimeName.join_group(this._radioName);
-        this._arrangeSubMenu.add(this._radioTimeName);
-        this._radioKindName = new Gtk.RadioMenuItem({label: _('Sort by Type')});
-        this._radioKindName.join_group(this._radioName);
-        this._arrangeSubMenu.add(this._radioKindName);
-        this._radioSizeName = new Gtk.RadioMenuItem({label: _('Sort by Size')});
-        this._radioSizeName.join_group(this._radioName);
-        this._arrangeSubMenu.add(this._radioSizeName);
-        this.doArrangeRadioButtons();
-        this._radioName.connect('activate', () => {
-            this.setIfActive(this._radioName, Enums.SortOrder.NAME);
-        });
-        this._radioDescName.connect('activate', () => {
-            this.setIfActive(this._radioDescName, Enums.SortOrder.DESCENDINGNAME);
-        });
-        this._radioTimeName.connect('activate', () => {
-            this.setIfActive(this._radioTimeName, Enums.SortOrder.MODIFIEDTIME);
-        });
-        this._radioKindName.connect('activate', () => {
-            this.setIfActive(this._radioKindName, Enums.SortOrder.KIND);
-        });
-        this._radioSizeName.connect('activate', () => {
-            this.setIfActive(this._radioSizeName, Enums.SortOrder.SIZE);
-        });
-
-        this._arrangeSubMenu.show_all();
     }
 
     onToggleStackUnstackThisTypeClicked(type, typeInList, unstackList) {
@@ -2159,8 +2009,6 @@ var DesktopManager = class {
         if (!this.stackInitialCoordinates && !this._allFileList) {
             this._allFileList = [];
             this._saveStackInitialCoordinates();
-            this._keepArrangedMenuItem.hide();
-            this._cleanUpMenuItem.hide();
             restack = false;
         }
         this._sortAllFilesFromGridsByKindStacked(restack);
@@ -2173,8 +2021,6 @@ var DesktopManager = class {
             this._restoreStackInitialCoordinates();
             this._fileList = this._allFileList;
             this._allFileList = null;
-            this._keepArrangedMenuItem.show();
-            this._cleanUpMenuItem.show();
             if (this.keepArranged) {
                 this.doSorts();
             } else {
@@ -2584,26 +2430,8 @@ var DesktopManager = class {
     }
 
     doArrangeRadioButtons() {
-        switch (Prefs.getSortOrder()) {
-        case Enums.SortOrder.NAME:
-            this._radioName.set_active(true);
-            break;
-        case Enums.SortOrder.DESCENDINGNAME:
-            this._radioDescName.set_active(true);
-            break;
-        case Enums.SortOrder.MODIFIEDTIME:
-            this._radioTimeName.set_active(true);
-            break;
-        case Enums.SortOrder.KIND:
-            this._radioKindName.set_active(true);
-            break;
-        case Enums.SortOrder.SIZE:
-            this._radioSizeName.set_active(true);
-            break;
-        default:
-            this._radioName.set_active(true);
+        if (!Object.values(Enums.SortOrder).includes(Prefs.getSortOrder())) {
             Prefs.setSortOrder(Enums.SortOrder.NAME);
-            break;
         }
     }
 

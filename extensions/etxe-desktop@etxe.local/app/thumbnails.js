@@ -16,16 +16,15 @@
  */
 'use strict';
 var GnomeDesktop = null;
-const ShowErrorPopup = imports.showErrorPopup;
-try {
-    imports.gi.versions.GnomeDesktop = '3.0';
-    GnomeDesktop = imports.gi.GnomeDesktop;
-} catch(e) {}
+for (const version of ['3.0', '4.0']) {
+    try {
+        imports.gi.versions.GnomeDesktop = version;
+        GnomeDesktop = imports.gi.GnomeDesktop;
+        break;
+    } catch(e) {}
+}
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
-const Gettext = imports.gettext.domain('ding');
-
-const _ = Gettext.gettext;
 
 var ThumbnailLoader = class {
     constructor(desktopManager, codePath) {
@@ -35,8 +34,7 @@ var ThumbnailLoader = class {
         this._thumbnailScriptWatch = null;
         this._running = false;
         if (!GnomeDesktop) {
-                desktopManager.dbusManager.doNotify(_('GnomeDesktop-3.0 GIR file not found'),
-                                                    _('GnomeDesktop-3.0.gir file is missing. Please, install the required package in your system.'));
+            print('GnomeDesktop GIR file not found; image thumbnails are disabled');
         } else {
             this._thumbnailFactoryNormal = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL);
             this._thumbnailFactoryLarge = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.LARGE);

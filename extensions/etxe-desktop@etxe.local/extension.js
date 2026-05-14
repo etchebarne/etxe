@@ -35,6 +35,42 @@ const Clipboard = St.Clipboard.get_default();
 const CLIPBOARD_TYPE = St.ClipboardType.CLIPBOARD;
 const ETXE_DESKTOP_APP_ID = 'local.etxe.Desktop';
 const ETXE_DESKTOP_APP_PATH = '/local/etxe/Desktop';
+const NATIVE_MENU_ACTIONS = new Set([
+    'desktop-new-folder',
+    'desktop-new-text-file',
+    'desktop-paste',
+    'desktop-undo',
+    'desktop-redo',
+    'desktop-select-all',
+    'desktop-arrange-icons',
+    'desktop-show-in-files',
+    'desktop-open-terminal',
+    'desktop-change-background',
+    'desktop-icons-settings',
+    'desktop-display-settings',
+    'file-open',
+    'file-stack-toggle',
+    'file-open-with',
+    'file-launch-dgpu',
+    'file-run-program',
+    'file-cut',
+    'file-copy',
+    'file-rename',
+    'file-trash',
+    'file-delete-permanently',
+    'file-allow-launching',
+    'file-empty-trash',
+    'file-eject',
+    'file-unmount',
+    'file-extract-here',
+    'file-extract-to',
+    'file-send-to',
+    'file-compress',
+    'file-new-folder-selection',
+    'file-properties',
+    'file-show-in-files',
+    'file-open-terminal',
+]);
 
 function is_wayland_compositor() {
     return Meta.is_wayland_compositor === undefined ||
@@ -322,6 +358,10 @@ export default class DING extends Extension {
     }
 
     addNativeDesktopMenuItem(menu, itemDefinition) {
+        if (!NATIVE_MENU_ACTIONS.has(itemDefinition.action)) {
+            return;
+        }
+
         const item = new PopupMenu.PopupMenuItem(itemDefinition.label ?? '');
         item.setSensitive(itemDefinition.sensitive ?? true);
         item.connect('activate', () => this.activateDesktopAppAction(itemDefinition.action));

@@ -18,14 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-imports.gi.versions.GnomeDesktop = '3.0';
-const GnomeDesktop = imports.gi.GnomeDesktop;
+var GnomeDesktop = null;
+for (const version of ['3.0', '4.0']) {
+    try {
+        imports.gi.versions.GnomeDesktop = version;
+        GnomeDesktop = imports.gi.GnomeDesktop;
+        break;
+    } catch(e) {}
+}
 const Gio = imports.gi.Gio;
 
 /**
  *
  */
 function CreateThumbnail() {
+    if (!GnomeDesktop) {
+        return 1;
+    }
+
     let thumbnailFactoryNormal = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL);
     let thumbnailFactoryLarge = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.LARGE);
 

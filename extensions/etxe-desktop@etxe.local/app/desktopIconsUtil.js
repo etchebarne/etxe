@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* exported getModifiersInDnD, getDesktopDir, getScriptsDir, getTemplatesDir, clamp,
+/* exported getModifiersInDnD, getDesktopDir, clamp,
    spawnCommandLine, launchTerminal, getFilteredEnviron, distanceBetweenPoints, getExtraFolders,
    getMounts, getFileExtensionOffset, getFilesFromNautilusDnD, writeTextFileToDesktop,
    windowHidePagerTaskbarModal, waitDelayMs */
@@ -49,25 +49,6 @@ function getModifiersInDnD(context, modifiersToCheck) {
 function getDesktopDir() {
     let desktopPath = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP);
     return Gio.File.new_for_commandline_arg(desktopPath);
-}
-
-/**
- *
- */
-function getScriptsDir() {
-    let scriptsDir =  GLib.build_filenamev([GLib.get_home_dir(), Enums.NAUTILUS_SCRIPTS_DIR]);
-    return Gio.File.new_for_commandline_arg(scriptsDir);
-}
-
-/**
- *
- */
-function getTemplatesDir() {
-    let templatesDir = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_TEMPLATES);
-    if ((templatesDir == GLib.get_home_dir()) || (templatesDir == null)) {
-        return null;
-    }
-    return Gio.File.new_for_commandline_arg(templatesDir);
 }
 
 /**

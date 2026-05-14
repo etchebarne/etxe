@@ -17,7 +17,10 @@
  */
 /* exported AskRenamePopup */
 'use strict';
+imports.gi.versions.Gdk = '3.0';
+imports.gi.versions.Gtk = '3.0';
 const Atk = imports.gi.Atk;
+const Gdk = imports.gi.Gdk;
 const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
@@ -29,13 +32,16 @@ const SignalManager = imports.signalManager;
 const _ = Gettext.gettext;
 
 var AskRenamePopup = class extends SignalManager.SignalManager {
-    constructor(extensionManager, fileItem, allowReturnOnSameName, closeCB) {
+    constructor(extensionManager, fileItem, allowReturnOnSameName, closeCB, initialReplacementText = null) {
         super();
-        this._extensionManager = extensionManager
+        this._extensionManager = extensionManager;
         this._closeCB = closeCB;
         this._allowReturnOnSameName = allowReturnOnSameName;
         this._desktopPath = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP);
         this._fileItem = fileItem;
+        this._submitted = false;
+        this._cancelRequested = false;
+        this._pendingText = fileItem.fileName;
         this._popover = new Gtk.Popover({
             relative_to: fileItem._iconContainer,
             modal: true,
@@ -59,9 +65,10 @@ var AskRenamePopup = class extends SignalManager.SignalManager {
         contentBox.attach(this._textArea, 0, 1, 1, 1);
         this._button = new Gtk.Button({label: allowReturnOnSameName ? _('OK') : _('Rename')});
         contentBox.attach(this._button, 1, 1, 1, 1);
-        this.connectSignal(this._button, 'clicked', this._do_rename.bind(this));
+        this.connectSignal(this._button, 'clicked', this._doButtonRename.bind(this));
         this.connectSignal(this._textArea, 'changed', this._validate.bind(this));
-        this.connectSignal(this._textArea, 'activate', this._do_rename.bind(this));
+        this.connectSignal(this._textArea, 'key-press-event', this._onKeyPress.bind(this));
+        this.connectSignal(this._textArea, 'activate', this._doEntryRename.bind(this));
         this.connectSignal(this._popover, 'closed', this._cleanAll.bind(this));
         this._extensionManager.showPopup();
         this._textArea.set_can_default(true);
@@ -71,10 +78,20 @@ var AskRenamePopup = class extends SignalManager.SignalManager {
         this._popover.popup();
         this._validate();
         this._textArea.grab_focus_without_selecting();
-        this._textArea.select_region(0, DesktopIconsUtil.getFileExtensionOffset(fileItem.fileName, {'isDirectory': fileItem.isDirectory}).offset);
+        const fileNameOffset = DesktopIconsUtil.getFileExtensionOffset(fileItem.fileName, {'isDirectory': fileItem.isDirectory}).offset;
+        if (initialReplacementText) {
+            const extension = fileItem.fileName.slice(fileNameOffset);
+            this._textArea.set_text(`${initialReplacementText}${extension}`);
+            this._textArea.set_position(initialReplacementText.length);
+        } else {
+            this._textArea.select_region(0, fileNameOffset);
+        }
     }
 
     _cleanAll() {
+        if (!this._cancelRequested && !this._submitted) {
+            this._submitRename(this._pendingText, false);
+        }
         this.disconnectAllSignals();
         this._extensionManager.hidePopup();
         this._closeCB();
@@ -94,32 +111,77 @@ var AskRenamePopup = class extends SignalManager.SignalManager {
     }
 
     _validate() {
-        let text = this._textArea.text;
-        let finalPath = `${this._desktopPath}/${text}`;
-        let finalFile = Gio.File.new_for_commandline_arg(finalPath);
-        if ((text == '') || (text.indexOf('/') !== -1) ||
-           ((text == this._fileItem.fileName) && !this._allowReturnOnSameName) ||
-           (finalFile.query_exists(null) && (text !== this._fileItem.fileName))) {
-            this._button.sensitive = false;
-        } else {
-            this._button.sensitive = true;
-        }
+        let text = this._currentText();
+        this._pendingText = text;
+        this._button.sensitive = this._isValidName(text);
     }
 
-    _do_rename() {
-        if (!this._button.sensitive) {
+    _currentText() {
+        return this._textArea.get_text();
+    }
+
+    _isValidName(text) {
+        if (!this._fileItem) {
+            return false;
+        }
+        let finalPath = `${this._desktopPath}/${text}`;
+        let finalFile = Gio.File.new_for_commandline_arg(finalPath);
+        return !((text == '') || (text.indexOf('/') !== -1) ||
+            ((text == this._fileItem.fileName) && !this._allowReturnOnSameName) ||
+            (finalFile.query_exists(null) && (text !== this._fileItem.fileName)));
+    }
+
+    _onKeyPress(widget, event) {
+        if (event.get_keyval()[1] === Gdk.KEY_Escape) {
+            this._cancelRequested = true;
+            this._popover.popdown();
+            return true;
+        }
+
+        return false;
+    }
+
+    _requestEntrySubmit() {
+        const text = this._currentText();
+        if (!this._isValidName(text)) {
             return;
         }
-        this._popover.popdown();
-        if (this._fileItem.fileName == this._textArea.text) {
+
+        this._pendingText = text;
+    }
+
+    _doButtonRename() {
+        this._submitRename(this._pendingText, true);
+    }
+
+    _doEntryRename() {
+        this._requestEntrySubmit();
+        this._submitRename(this._pendingText, true);
+    }
+
+    _submitRename(text, closePopover) {
+        if (this._submitted || !this._isValidName(text)) {
             return;
         }
-        DBusUtils.RemoteFileOperations.RenameURIRemote(
-            this._fileItem.file.get_uri(), this._textArea.text
-        );
+
+        const oldName = this._fileItem.fileName;
+        const uri = this._fileItem.file.get_uri();
+        this._submitted = true;
+
+        if (oldName != text) {
+            DBusUtils.RemoteFileOperations.RenameURIRemote(uri, text);
+        }
+
+        if (closePopover && this._popover.get_visible()) {
+            this._popover.popdown();
+        }
     }
 
     closeWindow() {
+        this._cancelRequested = true;
+        if (!this._popover.get_visible()) {
+            return;
+        }
         this._popover.popdown();
     }
 };

@@ -44,7 +44,7 @@ etxe_update_preflight() {
   [[ -f "$ETXE_FLATPAK_PACKAGES_FILE" ]] || etxe_die "missing Flatpak package list: $ETXE_FLATPAK_PACKAGES_FILE"
   [[ -d "$ETXE_PATH/extensions" ]] || etxe_log "No GNOME extensions directory found at $ETXE_PATH/extensions"
 
-  etxe_update_require_command grep install pacman tar
+  etxe_update_require_command grep install pacman sed tar
 }
 
 etxe_update_pacman_args() {
@@ -223,10 +223,15 @@ etxe_configure_gnome_dconf() {
   keymap="$(etxe_keyboard_current_keymap)"
   input_sources_value="$(etxe_keyboard_gnome_input_sources_value "$keymap")"
 
-  install -d -m 0755 /etc/dconf/db/local.d /etc/dconf/profile
+  install -d -m 0755 /etc/dconf/db/local.d /etc/dconf/db/gdm.d /etc/dconf/profile
   cat >/etc/dconf/profile/user <<'EOF'
 user-db:user
 system-db:local
+EOF
+  cat >/etc/dconf/profile/gdm <<'EOF'
+user-db:user
+system-db:gdm
+file-db:/usr/share/gdm/greeter-dconf-defaults
 EOF
 
   cat >/etc/dconf/db/local.d/00-etxe <<'EOF'
@@ -234,8 +239,15 @@ EOF
 favorite-apps=['org.gnome.Nautilus.desktop', 'org.gnome.Console.desktop', 'firefox.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Software.desktop']
 always-show-log-out=true
 EOF
+  cat >/etc/dconf/db/gdm.d/00-etxe <<'EOF'
+[org/gnome/login-screen]
+logo='/usr/share/pixmaps/etxe-logo.svg'
+EOF
   printf 'enabled-extensions=[%s]\n\n' "$enabled_extensions_value" >>/etc/dconf/db/local.d/00-etxe
   cat >>/etc/dconf/db/local.d/00-etxe <<'EOF'
+
+[org/gnome/login-screen]
+logo='/usr/share/pixmaps/etxe-logo.svg'
 
 [org/gnome/desktop/interface]
 clock-show-weekday=true
@@ -264,6 +276,19 @@ etxe_update_branding() {
     /usr/share/icons/hicolor/scalable/apps/etxe-icon-symbolic.svg
   install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-icon-symbolic.svg" \
     /usr/share/icons/hicolor/symbolic/apps/etxe-icon-symbolic.svg
+  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
+    /usr/share/icons/hicolor/scalable/apps/etxe-logo.svg
+  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
+    /usr/share/icons/hicolor/symbolic/apps/etxe-logo-symbolic.svg
+  sed -i 's/fill="white"/fill="#222222"/g' \
+    /usr/share/icons/hicolor/symbolic/apps/etxe-logo-symbolic.svg
+  install -D -m 0644 "$ETXE_PATH/assets/brand/etxe-logo.svg" \
+    /usr/share/pixmaps/etxe-logo.svg
+
+  if command -v gtk-update-icon-cache >/dev/null; then
+    gtk-update-icon-cache -q -f /usr/share/icons/hicolor \
+      || etxe_log "Icon cache update failed; continuing"
+  fi
 
   rm -f /etc/os-release
   cat >/etc/os-release <<'EOF'
@@ -277,7 +302,7 @@ DOCUMENTATION_URL="https://wiki.archlinux.org/"
 SUPPORT_URL="https://bbs.archlinux.org/"
 BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
 PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
-LOGO=etxe-icon-symbolic
+LOGO=etxe-logo-symbolic
 EOF
 
   printf 'Etxe \\r (\\l)\n' >/etc/issue

@@ -23,10 +23,15 @@ etxe_configure_gnome_dconf() {
   keymap="$(etxe_keyboard_current_keymap "$ETXE_MOUNT")"
   input_sources_value="$(etxe_keyboard_gnome_input_sources_value "$keymap" "$ETXE_MOUNT")"
 
-  install -d -m 0755 "$ETXE_MOUNT/etc/dconf/db/local.d" "$ETXE_MOUNT/etc/dconf/profile"
+  install -d -m 0755 "$ETXE_MOUNT/etc/dconf/db/local.d" "$ETXE_MOUNT/etc/dconf/db/gdm.d" "$ETXE_MOUNT/etc/dconf/profile"
   cat >"$ETXE_MOUNT/etc/dconf/profile/user" <<'EOF'
 user-db:user
 system-db:local
+EOF
+  cat >"$ETXE_MOUNT/etc/dconf/profile/gdm" <<'EOF'
+user-db:user
+system-db:gdm
+file-db:/usr/share/gdm/greeter-dconf-defaults
 EOF
 
   cat >"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe" <<'EOF'
@@ -34,8 +39,15 @@ EOF
 favorite-apps=['org.gnome.Nautilus.desktop', 'org.gnome.Console.desktop', 'firefox.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Software.desktop']
 always-show-log-out=true
 EOF
+  cat >"$ETXE_MOUNT/etc/dconf/db/gdm.d/00-etxe" <<'EOF'
+[org/gnome/login-screen]
+logo='/usr/share/pixmaps/etxe-logo.svg'
+EOF
   printf 'enabled-extensions=[%s]\n\n' "$enabled_extensions_value" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
   cat >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe" <<'EOF'
+
+[org/gnome/login-screen]
+logo='/usr/share/pixmaps/etxe-logo.svg'
 
 [org/gnome/desktop/interface]
 clock-show-weekday=true

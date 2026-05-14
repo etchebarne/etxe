@@ -29,7 +29,7 @@ The updater only runs on systems branded as Etxe unless `ETXE_UPDATE_FORCE=YES` 
 For a VM reachable over SSH, copy the current checkout and run the updater with:
 
 ```sh
-./iso/update-vm.sh martin@127.0.0.1 2222
+./iso/update-vm.sh user@127.0.0.1 2222
 ```
 
 Use the username, host, and port for your VM. VMs created with `./iso/create-vm.sh --3d` normally use host `127.0.0.1` and port `2222`. SSH must be enabled in the VM first with `sudo pacman -S --needed openssh && sudo systemctl enable --now sshd`.

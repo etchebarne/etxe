@@ -46,6 +46,18 @@ const Gettext = imports.gettext.domain('ding');
 
 const _ = Gettext.gettext;
 
+const ACCENT_COLORS = {
+    blue: [0x35, 0x84, 0xe4],
+    teal: [0x21, 0x90, 0xa4],
+    green: [0x3a, 0x94, 0x4a],
+    yellow: [0xc8, 0x88, 0x00],
+    orange: [0xed, 0x5b, 0x00],
+    red: [0xe6, 0x2d, 0x42],
+    pink: [0xd5, 0x61, 0x99],
+    purple: [0x91, 0x41, 0xac],
+    slate: [0x6f, 0x83, 0x96],
+};
+
 var DesktopManager = class {
     constructor(mainApp, dbusManager, desktopList, codePath, asDesktop, primaryIndex) {
         this.mainApp = mainApp;
@@ -121,13 +133,14 @@ var DesktopManager = class {
 
         this.fileItemMenu = new FileItemMenu.FileItemMenu(this);
         if (Prefs.schemaGnomeDarkSettings) {
-            if (this._checkApplyDarkModeSetting()) {
-                Prefs.schemaGnomeDarkSettings.connect('changed', (obj, key) => {
-                    if (key === 'color-scheme') {
-                        this._checkApplyDarkModeSetting();
-                    }
-                });
-            }
+            this._checkApplyDarkModeSetting();
+            Prefs.schemaGnomeDarkSettings.connect('changed', (obj, key) => {
+                if (key === 'color-scheme') {
+                    this._checkApplyDarkModeSetting();
+                } else if (key === 'accent-color') {
+                    this._reloadSelectionColor();
+                }
+            });
         }
         this._showHidden = Prefs.gtkSettings.get_boolean('show-hidden');
         this.showDropPlace = Prefs.desktopSettings.get_boolean('show-drop-place');
@@ -469,21 +482,53 @@ var DesktopManager = class {
         this._styleContext.add_class('view');
         this._cssProviderSelection = new Gtk.CssProvider();
         this._styleContext.connect('changed', () => {
-            Gtk.StyleContext.remove_provider_for_screen(Gdk.Screen.get_default(), this._cssProviderSelection);
-            this._setSelectionColor();
+            this._reloadSelectionColor();
         });
         this._setSelectionColor();
     }
 
+    _reloadSelectionColor() {
+        if (!this._cssProviderSelection) {
+            return;
+        }
+
+        Gtk.StyleContext.remove_provider_for_screen(Gdk.Screen.get_default(), this._cssProviderSelection);
+        this._setSelectionColor();
+        for (let desktop of this._desktops) {
+            desktop.queue_draw();
+        }
+    }
+
+    _getSelectionColor() {
+        if (Prefs.schemaGnomeDarkSettings && Prefs.schemaGnomeDarkSettings.settings_schema.has_key('accent-color')) {
+            const accent = Prefs.schemaGnomeDarkSettings.get_string('accent-color');
+            if (accent in ACCENT_COLORS) {
+                const [red, green, blue] = ACCENT_COLORS[accent];
+                return new Gdk.RGBA({
+                    red: red / 255,
+                    green: green / 255,
+                    blue: blue / 255,
+                    alpha: 1.0,
+                });
+            }
+        }
+
+        return this._styleContext.get_background_color(Gtk.StateFlags.SELECTED);
+    }
+
+    _selectionColorCss(alpha) {
+        return `rgba(${this.selectColor.red * 255}, ${this.selectColor.green * 255}, ${this.selectColor.blue * 255}, ${alpha})`;
+    }
+
     _setSelectionColor() {
-        this.selectColor = this._styleContext.get_background_color(Gtk.StateFlags.SELECTED);
+        this.selectColor = this._getSelectionColor();
         let style = `.desktop-icons-selected {
-            background-color: rgba(${this.selectColor.red * 255},${this.selectColor.green * 255}, ${this.selectColor.blue * 255}, 0.5);
-            border-color: rgba(${this.selectColor.red * 255},${this.selectColor.green * 255}, ${this.selectColor.blue * 255}, 0);
+            background-color: ${this._selectionColorCss(0.5)};
+            border-color: ${this._selectionColorCss(0)};
         }
         .desktop-icons-keyboard-selected {
-            background-color: rgba(${this.selectColor.red * 255},${this.selectColor.green * 255}, ${this.selectColor.blue * 255}, 0.5);
-            border-color: rgba(${this.selectColor.red * 255},${this.selectColor.green * 255}, ${this.selectColor.blue * 255}, 0.8);
+            background-color: ${this._selectionColorCss(0.5)};
+            border-color: ${this._selectionColorCss(0.8)};
         }`;
         this._cssProviderSelection.load_from_data(style);
         Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), this._cssProviderSelection, 600);

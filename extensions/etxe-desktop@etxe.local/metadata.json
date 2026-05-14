@@ -1,0 +1,7 @@
+{
+    "description": "Etxe desktop icons, based on Desktop Icons NG.",
+    "name": "Etxe Desktop",
+    "shell-version": ["46", "47", "48", "49", "50"],
+    "uuid": "etxe-desktop@etxe.local",
+    "url": "https://github.com/martinetbn/etxe"
+}

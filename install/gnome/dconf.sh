@@ -61,6 +61,9 @@ picture-options='zoom'
 [org/gnome/desktop/interface]
 clock-show-weekday=true
 enable-animations=true
+
+[org/gnome/shell/extensions/etxe-desktop]
+show-home=false
 EOF
   printf '[org/gnome/desktop/input-sources]\n' >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
   printf 'sources=[%s]\n' "$input_sources_value" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"

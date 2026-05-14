@@ -26,7 +26,8 @@ EOF
 
   cat >"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe" <<'EOF'
 [org/gnome/shell]
-favorite-apps=['org.gnome.Nautilus.desktop', 'org.gnome.Console.desktop', 'firefox.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Software.desktop', 'etxe-log-out.desktop']
+favorite-apps=['org.gnome.Nautilus.desktop', 'org.gnome.Console.desktop', 'firefox.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Software.desktop']
+always-show-log-out=true
 EOF
   printf 'enabled-extensions=[%s]\n\n' "$enabled_extensions_value" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
   cat >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe" <<'EOF'

@@ -27,6 +27,7 @@ noto-fonts
 noto-fonts-emoji
 gdm
 gnome-shell
+gnome-shell-extension-dash-to-panel
 gjs
 libadwaita
 gnome-control-center

@@ -1,8 +1,23 @@
 #!/usr/bin/env bash
 
+etxe_dash_to_panel_extension_version() {
+  local metadata="$1"
+  local line
+
+  [[ -f "$metadata" ]] || return 0
+
+  while IFS= read -r line; do
+    if [[ "$line" =~ \"version\"[[:space:]]*:[[:space:]]*([0-9]+) ]]; then
+      printf '%s\n' "${BASH_REMATCH[1]}"
+      return 0
+    fi
+  done <"$metadata"
+}
+
 etxe_configure_gnome_dconf() {
   etxe_log "Configuring GNOME defaults"
 
+  local dash_to_panel_version
   local enabled_extensions_value=""
   local extension_uuid
   local input_sources_value
@@ -22,6 +37,7 @@ etxe_configure_gnome_dconf() {
 
   keymap="$(etxe_keyboard_current_keymap "$ETXE_MOUNT")"
   input_sources_value="$(etxe_keyboard_gnome_input_sources_value "$keymap" "$ETXE_MOUNT")"
+  dash_to_panel_version="$(etxe_dash_to_panel_extension_version "$ETXE_MOUNT/usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com/metadata.json")"
 
   install -d -m 0755 "$ETXE_MOUNT/etc/dconf/db/local.d" "$ETXE_MOUNT/etc/dconf/db/gdm.d" "$ETXE_MOUNT/etc/dconf/profile"
   cat >"$ETXE_MOUNT/etc/dconf/profile/user" <<'EOF'
@@ -64,7 +80,18 @@ enable-animations=true
 
 [org/gnome/shell/extensions/etxe-desktop]
 show-home=false
+
+[org/gnome/shell/extensions/dash-to-panel]
+panel-position='BOTTOM'
+intellihide=false
+show-favorites=true
+show-running-apps=true
 EOF
+  if [[ -n "$dash_to_panel_version" ]]; then
+    printf 'extension-version=%s\n\n' "$dash_to_panel_version" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
+  else
+    printf '\n' >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
+  fi
   printf '[org/gnome/desktop/input-sources]\n' >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
   printf 'sources=[%s]\n' "$input_sources_value" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"
   printf 'mru-sources=[%s]\n' "$input_sources_value" >>"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe"

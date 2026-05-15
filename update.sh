@@ -135,7 +135,7 @@ etxe_install_gnome_extensions() {
   local extension_dest_root="/usr/share/gnome-shell/extensions"
   local extension_dir extension_uuid extension_dest restore_nullglob
 
-  ETXE_GNOME_ENABLED_EXTENSIONS=()
+  ETXE_GNOME_ENABLED_EXTENSIONS=("dash-to-panel@jderose9.github.com")
 
   [[ -d "$extension_root" ]] || return 0
   etxe_update_require_command glib-compile-schemas
@@ -245,7 +245,22 @@ etxe_install_welcome_app() {
   systemctl --global enable etxe-welcome.service
 }
 
+etxe_dash_to_panel_extension_version() {
+  local metadata="$1"
+  local line
+
+  [[ -f "$metadata" ]] || return 0
+
+  while IFS= read -r line; do
+    if [[ "$line" =~ \"version\"[[:space:]]*:[[:space:]]*([0-9]+) ]]; then
+      printf '%s\n' "${BASH_REMATCH[1]}"
+      return 0
+    fi
+  done <"$metadata"
+}
+
 etxe_configure_gnome_dconf() {
+  local dash_to_panel_version
   local enabled_extensions_value=""
   local extension_uuid
   local input_sources_value
@@ -264,6 +279,7 @@ etxe_configure_gnome_dconf() {
 
   keymap="$(etxe_keyboard_current_keymap)"
   input_sources_value="$(etxe_keyboard_gnome_input_sources_value "$keymap")"
+  dash_to_panel_version="$(etxe_dash_to_panel_extension_version "/usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com/metadata.json")"
 
   install -d -m 0755 /etc/dconf/db/local.d /etc/dconf/db/gdm.d /etc/dconf/profile
   cat >/etc/dconf/profile/user <<'EOF'
@@ -306,7 +322,18 @@ enable-animations=true
 
 [org/gnome/shell/extensions/etxe-desktop]
 show-home=false
+
+[org/gnome/shell/extensions/dash-to-panel]
+panel-position='BOTTOM'
+intellihide=false
+show-favorites=true
+show-running-apps=true
 EOF
+  if [[ -n "$dash_to_panel_version" ]]; then
+    printf 'extension-version=%s\n\n' "$dash_to_panel_version" >>/etc/dconf/db/local.d/00-etxe
+  else
+    printf '\n' >>/etc/dconf/db/local.d/00-etxe
+  fi
   printf '[org/gnome/desktop/input-sources]\n' >>/etc/dconf/db/local.d/00-etxe
   printf 'sources=[%s]\n' "$input_sources_value" >>/etc/dconf/db/local.d/00-etxe
   printf 'mru-sources=[%s]\n' "$input_sources_value" >>/etc/dconf/db/local.d/00-etxe

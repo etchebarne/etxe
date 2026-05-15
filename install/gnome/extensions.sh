@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ETXE_GNOME_ENABLED_EXTENSIONS=()
+ETXE_GNOME_ENABLED_EXTENSIONS=("dash-to-panel@jderose9.github.com")
 
 etxe_gnome_extension_gettext_domain() {
   local metadata="$1"

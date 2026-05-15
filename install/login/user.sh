@@ -4,6 +4,8 @@ etxe_configure_user() {
   etxe_log "Creating user $USERNAME"
 
   arch-chroot "$ETXE_MOUNT" useradd -m -G wheel -s /bin/bash "$USERNAME"
+  arch-chroot "$ETXE_MOUNT" install -d -m 0755 -o "$USERNAME" -g "$USERNAME" \
+    "/home/$USERNAME/Desktop"
 
   if [[ -n "${USER_PASSWORD:-}" ]]; then
     etxe_log "Setting password for $USERNAME"

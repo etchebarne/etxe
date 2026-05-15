@@ -48,7 +48,22 @@ function getModifiersInDnD(context, modifiersToCheck) {
  */
 function getDesktopDir() {
     let desktopPath = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP);
-    return Gio.File.new_for_commandline_arg(desktopPath);
+    if (!desktopPath) {
+        desktopPath = GLib.build_filenamev([GLib.get_home_dir(), 'Desktop']);
+    }
+
+    let desktopDir = Gio.File.new_for_path(desktopPath);
+    if (!desktopDir.query_exists(null)) {
+        try {
+            desktopDir.make_directory_with_parents(null);
+        } catch (e) {
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.EXISTS)) {
+                print(`Failed to create desktop directory ${desktopPath}: ${e.message}`);
+            }
+        }
+    }
+
+    return desktopDir;
 }
 
 /**

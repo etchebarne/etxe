@@ -36,7 +36,7 @@ EOF
 
   cat >"$ETXE_MOUNT/etc/dconf/db/local.d/00-etxe" <<'EOF'
 [org/gnome/shell]
-favorite-apps=['org.gnome.Nautilus.desktop', 'org.gnome.Console.desktop', 'firefox.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Software.desktop']
+favorite-apps=['org.gnome.Nautilus.desktop', 'firefox.desktop', 'org.gnome.Software.desktop']
 always-show-log-out=true
 EOF
   cat >"$ETXE_MOUNT/etc/dconf/db/gdm.d/00-etxe" <<'EOF'

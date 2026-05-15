@@ -26,9 +26,13 @@ system-config-printer
 noto-fonts
 noto-fonts-emoji
 gdm
+gdk-pixbuf2
+gnome-desktop
 gnome-shell
 gnome-shell-extension-dash-to-panel
 gjs
+gtk3
+gvfs
 libadwaita
 gnome-control-center
 gnome-settings-daemon
@@ -44,6 +48,7 @@ flatpak
 xdg-desktop-portal
 xdg-desktop-portal-gnome
 xdg-desktop-portal-gtk
+xdg-user-dirs
 xorg-xwayland
 gnome-console
 nautilus

@@ -58,11 +58,16 @@ etxe_install_gnome_extensions() {
 
     etxe_log "Installing GNOME extension $extension_uuid"
     extension_dest="$extension_dest_root/$extension_uuid"
+    rm -rf "$extension_dest"
     install -d -m 0755 "$extension_dest"
     cp -a "$extension_dir/." "$extension_dest/"
+    [[ ! -f "$extension_dest/app/ding.js" ]] || chmod 0755 "$extension_dest/app/ding.js"
+    [[ ! -f "$extension_dest/app/createThumbnail.js" ]] || chmod 0755 "$extension_dest/app/createThumbnail.js"
     etxe_compile_gnome_extension_translations "$extension_dest"
     if [[ -d "$extension_dest/schemas" ]]; then
       arch-chroot "$ETXE_MOUNT" glib-compile-schemas "/usr/share/gnome-shell/extensions/$extension_uuid/schemas"
+      [[ -f "$extension_dest/schemas/gschemas.compiled" ]] \
+        || etxe_die "failed to compile GNOME extension schemas for $extension_uuid"
     fi
     ETXE_GNOME_ENABLED_EXTENSIONS+=("$extension_uuid")
   done

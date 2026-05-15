@@ -2,4 +2,5 @@
 
 etxe_run "$ETXE_INSTALL/gnome/extensions.sh"
 etxe_run "$ETXE_INSTALL/gnome/app-grid.sh"
+etxe_run "$ETXE_INSTALL/gnome/welcome.sh"
 etxe_run "$ETXE_INSTALL/gnome/dconf.sh"

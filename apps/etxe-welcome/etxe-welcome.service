@@ -1,0 +1,11 @@
+[Unit]
+Description=Show the Etxe welcome guide
+ConditionPathExists=!%h/.local/state/etxe/welcome-seen
+PartOf=graphical-session.target
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/etxe-welcome --first-run
+
+[Install]
+WantedBy=graphical-session.target

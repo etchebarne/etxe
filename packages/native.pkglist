@@ -27,6 +27,8 @@ noto-fonts
 noto-fonts-emoji
 gdm
 gnome-shell
+gjs
+libadwaita
 gnome-control-center
 gnome-settings-daemon
 gnome-session

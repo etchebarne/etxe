@@ -1,0 +1,318 @@
+#!/usr/bin/env gjs
+
+imports.gi.versions.Adw = '1';
+imports.gi.versions.Gdk = '4.0';
+imports.gi.versions.GioUnix = '2.0';
+imports.gi.versions.GLib = '2.0';
+imports.gi.versions.Gtk = '4.0';
+
+const {Adw, Gdk, GioUnix, GLib, Gtk} = imports.gi;
+
+const APP_ID = 'local.etxe.Welcome';
+const FIRST_RUN_ARG = '--first-run';
+const WELCOME_MARKER = GLib.build_filenamev([
+  GLib.get_user_state_dir(),
+  'etxe',
+  'welcome-seen',
+]);
+
+const WELCOME_PAGES = [
+  {
+    iconName: 'local.etxe.Welcome-symbolic',
+    title: 'Welcome to Etxe',
+    body: 'Etxe is a friendly GNOME desktop built on Arch Linux. The goal is to keep the system capable while making the first steps calm, clear, and familiar. This short guide introduces the places you will probably use first.',
+  },
+  {
+    iconName: 'view-app-grid-symbolic',
+    title: 'Find your way around',
+    body: 'The top bar is where you find system status, quick settings, and the clock. Press the Super key to open the overview, search for apps, switch windows, or get back to something you already opened. The app grid is there when you would rather browse everything installed.',
+  },
+  {
+    iconName: 'org.gnome.Software-symbolic',
+    title: 'Install apps and updates',
+    body: 'Software is the safest place to install desktop apps and receive updates. Etxe includes Flathub support, so many common apps are available without using the terminal. When Software notifies you about updates, installing them keeps apps and system components current.',
+    actionLabel: 'Open Software',
+    desktopId: 'org.gnome.Software.desktop',
+  },
+  {
+    iconName: 'folder-symbolic',
+    title: 'Keep track of your files',
+    body: 'Files is where your documents, downloads, pictures, removable drives, and network locations live. Your home folder is the safest place to store personal files. Downloads from the browser usually land in Downloads, and external drives appear in the sidebar when you plug them in.',
+    actionLabel: 'Open Files',
+    desktopId: 'org.gnome.Nautilus.desktop',
+  },
+  {
+    iconName: 'preferences-system-symbolic',
+    title: 'Make the desktop yours',
+    body: 'Settings contains the everyday controls for the computer: Wi-Fi, Bluetooth, displays, printers, keyboard layout, power, accessibility, privacy, and appearance. If something about the desktop does not feel right, Settings is usually the best place to start.',
+    actionLabel: 'Open Settings',
+    desktopId: 'org.gnome.Settings.desktop',
+  },
+  {
+    iconName: 'drive-harddisk-symbolic',
+    title: 'Protect important work',
+    body: 'Backups are worth setting up before something goes wrong. Etxe includes the GNOME Backups app so you can copy important files to another disk or storage location. Documents, photos, projects, and anything hard to replace are the things to protect first.',
+    actionLabel: 'Open Backups',
+    desktopId: 'org.gnome.DejaDup.desktop',
+  },
+  {
+    iconName: 'help-browser-symbolic',
+    title: 'You are ready to start',
+    body: 'This is the first version of the Etxe guide. You can open it again from the app grid whenever you want a refresher. Future versions can add deeper pages for troubleshooting, recovery, and common tasks.',
+  },
+];
+
+function loadStyles() {
+  const display = Gdk.Display.get_default();
+
+  if (!display)
+    return;
+
+  const provider = new Gtk.CssProvider();
+  const css = `
+    .welcome-page {
+      min-height: 440px;
+    }
+
+    .welcome-mark {
+      color: @window_fg_color;
+    }
+
+    .welcome-body {
+      font-size: 1.12em;
+    }
+
+  `;
+  provider.load_from_data(css, css.length);
+  Gtk.StyleContext.add_provider_for_display(
+    display,
+    provider,
+    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+  );
+}
+
+function markWelcomeSeen() {
+  try {
+    GLib.mkdir_with_parents(GLib.path_get_dirname(WELCOME_MARKER), 0o700);
+    GLib.file_set_contents(WELCOME_MARKER, `${new Date().toISOString()}\n`);
+  } catch (error) {
+    logError(error, 'Unable to store Etxe welcome first-run state');
+  }
+}
+
+function launchDesktopApp(desktopId) {
+  const appInfo = GioUnix.DesktopAppInfo.new(desktopId);
+
+  if (!appInfo)
+    return false;
+
+  try {
+    return appInfo.launch([], null);
+  } catch (error) {
+    logError(error, `Unable to launch ${desktopId}`);
+    return false;
+  }
+}
+
+function makeLabel(label, cssClass = null, xalign = 0) {
+  const widget = new Gtk.Label({
+    label,
+    xalign,
+    wrap: true,
+  });
+
+  if (cssClass)
+    widget.add_css_class(cssClass);
+
+  return widget;
+}
+
+function makeCenteredLabel(label, cssClass = null) {
+  const widget = makeLabel(label, cssClass, 0.5);
+  widget.set_justify(Gtk.Justification.CENTER);
+  widget.set_max_width_chars(58);
+  return widget;
+}
+
+function makeGuidePage(page) {
+  const root = new Gtk.Box({
+    orientation: Gtk.Orientation.VERTICAL,
+    vexpand: true,
+    margin_top: 28,
+    margin_bottom: 28,
+    margin_start: 28,
+    margin_end: 28,
+  });
+  root.add_css_class('welcome-page');
+
+  const pageContent = new Gtk.Box({
+    orientation: Gtk.Orientation.VERTICAL,
+    spacing: 24,
+    halign: Gtk.Align.CENTER,
+    valign: Gtk.Align.CENTER,
+  });
+
+  root.append(new Gtk.Box({vexpand: true}));
+  root.append(pageContent);
+  root.append(new Gtk.Box({vexpand: true}));
+
+  const icon = new Gtk.Image({
+    icon_name: page.iconName,
+    pixel_size: page.iconName === 'local.etxe.Welcome-symbolic' ? 112 : 96,
+    halign: Gtk.Align.CENTER,
+    valign: Gtk.Align.CENTER,
+  });
+  icon.add_css_class('welcome-mark');
+  pageContent.append(icon);
+
+  const text = new Gtk.Box({
+    orientation: Gtk.Orientation.VERTICAL,
+    spacing: 16,
+    halign: Gtk.Align.CENTER,
+  });
+
+  text.append(makeCenteredLabel(page.title, 'title-1'));
+  text.append(makeCenteredLabel(page.body, 'welcome-body'));
+  pageContent.append(text);
+  return root;
+}
+
+function makeWelcomeWindow(app, firstRun) {
+  let markedSeen = false;
+  const finishFirstRun = () => {
+    if (!firstRun || markedSeen)
+      return;
+
+    markedSeen = true;
+    markWelcomeSeen();
+  };
+
+  const window = new Adw.ApplicationWindow({
+    application: app,
+    title: 'Welcome to Etxe',
+    default_width: 820,
+    default_height: 660,
+  });
+  window.set_icon_name('local.etxe.Welcome-symbolic');
+  window.connect('close-request', () => {
+    finishFirstRun();
+    return false;
+  });
+
+  const shell = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL});
+  shell.append(new Adw.HeaderBar());
+
+  const clamp = new Adw.Clamp({
+    maximum_size: 820,
+    tightening_threshold: 520,
+    vexpand: true,
+  });
+
+  const content = new Gtk.Box({
+    orientation: Gtk.Orientation.VERTICAL,
+    spacing: 8,
+    vexpand: true,
+  });
+  clamp.set_child(content);
+  shell.append(clamp);
+
+  const stack = new Gtk.Stack({
+    transition_type: Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
+    transition_duration: 220,
+    vexpand: true,
+  });
+  WELCOME_PAGES.forEach((page, index) => {
+    stack.add_named(makeGuidePage(page), String(index));
+  });
+  content.append(stack);
+
+  const footer = new Gtk.Box({
+    orientation: Gtk.Orientation.HORIZONTAL,
+    spacing: 12,
+    margin_top: 0,
+    margin_bottom: 20,
+    margin_start: 24,
+    margin_end: 24,
+  });
+
+  const previousButton = new Gtk.Button({label: 'Previous'});
+  previousButton.connect('clicked', () => {
+    if (currentPage > 0) {
+      currentPage -= 1;
+      updatePage();
+    }
+  });
+
+  const progressLabel = makeLabel('', 'dim-label', 0.5);
+  progressLabel.set_hexpand(true);
+  progressLabel.set_halign(Gtk.Align.CENTER);
+
+  const actionButton = new Gtk.Button();
+  actionButton.connect('clicked', () => {
+    const page = WELCOME_PAGES[currentPage];
+
+    if (page.desktopId)
+      launchDesktopApp(page.desktopId);
+  });
+
+  const nextButton = new Gtk.Button();
+  nextButton.add_css_class('suggested-action');
+  nextButton.connect('clicked', () => {
+    if (currentPage < WELCOME_PAGES.length - 1) {
+      currentPage += 1;
+      updatePage();
+      return;
+    }
+
+    finishFirstRun();
+    window.close();
+  });
+
+  footer.append(previousButton);
+  footer.append(progressLabel);
+  footer.append(actionButton);
+  footer.append(nextButton);
+  content.append(footer);
+
+  let currentPage = 0;
+  const updatePage = () => {
+    const page = WELCOME_PAGES[currentPage];
+
+    stack.set_visible_child_name(String(currentPage));
+    previousButton.set_sensitive(currentPage > 0);
+    progressLabel.set_label(`Step ${currentPage + 1} of ${WELCOME_PAGES.length}`);
+    nextButton.set_label(
+      currentPage === WELCOME_PAGES.length - 1
+        ? (firstRun ? 'Start Using Etxe' : 'Close')
+        : 'Next',
+    );
+
+    if (page.actionLabel && page.desktopId) {
+      actionButton.set_label(page.actionLabel);
+      actionButton.set_visible(true);
+    } else {
+      actionButton.set_visible(false);
+    }
+  };
+  updatePage();
+
+  window.set_content(shell);
+  return window;
+}
+
+Adw.init();
+loadStyles();
+
+const firstRun = ARGV.includes(FIRST_RUN_ARG);
+const appArgs = ARGV.filter(arg => arg !== FIRST_RUN_ARG);
+const app = new Adw.Application({application_id: APP_ID});
+let window = null;
+
+app.connect('activate', () => {
+  if (!window)
+    window = makeWelcomeWindow(app, firstRun);
+
+  window.present();
+});
+
+app.run(appArgs);

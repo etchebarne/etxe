@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Etxe Welcome
+Comment=Get started with Etxe
+Exec=etxe-welcome
+Icon=local.etxe.Welcome-symbolic
+Terminal=false
+Categories=GNOME;GTK;Utility;
+StartupNotify=true
+X-GNOME-UsesNotifications=false

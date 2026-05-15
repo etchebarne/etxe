@@ -16,6 +16,13 @@ man-pages
 texinfo
 networkmanager
 systemd-resolvconf
+avahi
+nss-mdns
+cups
+cups-pk-helper
+cups-filters
+ipp-usb
+system-config-printer
 noto-fonts
 noto-fonts-emoji
 gdm

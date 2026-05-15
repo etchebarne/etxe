@@ -78,6 +78,22 @@ etxe_update_flatpaks() {
   flatpak update --system --noninteractive --assumeyes
 }
 
+etxe_configure_printing() {
+  etxe_log "Updating printing services"
+
+  systemctl enable --now cups.service avahi-daemon.service ipp-usb.service
+
+  if [[ -f /etc/nsswitch.conf ]] && ! grep -Eq '^hosts:.*[[:space:]]mdns_minimal([[:space:]]|$)' /etc/nsswitch.conf; then
+    sed -i -E '/^hosts:/ {
+      s/[[:space:]]+resolve([[:space:]]+\[!UNAVAIL=return\])?/ mdns_minimal [NOTFOUND=return]&/
+      t
+      s/[[:space:]]+dns/ mdns_minimal [NOTFOUND=return]&/
+      t
+      s/$/ mdns_minimal [NOTFOUND=return]/
+    }' /etc/nsswitch.conf
+  fi
+}
+
 etxe_gnome_extension_gettext_domain() {
   local metadata="$1"
   local line
@@ -236,7 +252,7 @@ EOF
 
   cat >/etc/dconf/db/local.d/00-etxe <<'EOF'
 [org/gnome/shell]
-favorite-apps=['org.gnome.Nautilus.desktop', 'org.gnome.Console.desktop', 'firefox.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Software.desktop']
+favorite-apps=['org.gnome.Nautilus.desktop', 'firefox.desktop', 'org.gnome.Software.desktop']
 always-show-log-out=true
 EOF
   cat >/etc/dconf/db/gdm.d/00-etxe <<'EOF'
@@ -373,6 +389,7 @@ etxe_update_require_installed_etxe
 etxe_start_log
 etxe_update_preflight
 etxe_update_native_packages
+etxe_configure_printing
 etxe_update_flatpaks
 etxe_install_gnome_extensions
 etxe_hide_gnome_app_grid_launchers
